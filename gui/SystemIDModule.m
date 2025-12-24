@@ -60,7 +60,7 @@ classdef SystemIDModule < BaseModule
             obj.controls.den_order = uicontrol('Parent', control_panel, ...
                 'Style', 'popupmenu', ...
                 'String', {'1', '2', '3', '4'}, ...
-                'Value', 2, ...
+                'Value', 1, ...
                 'Position', [210, y_pos, 60, 25], ...
                 'BackgroundColor', 'white');
             
@@ -263,15 +263,19 @@ classdef SystemIDModule < BaseModule
                 
                 % 更新信息
                 tf_str = obj.identifier.getTransferFunctionString();
-                info_str = sprintf('辨识完成! 拟合度: %.2f%%', obj.results.fitting);
-                
-                set(obj.controls.info_text, 'String', info_str, ...
-                    'ForegroundColor', 'green');
+                if startsWith(tf_str, 'G(s) = ')
+                    tf_str = tf_str(8:end);
+                end
+
+                if length(tf_str) > 30
+                    short_tf = [tf_str(1:30) '...'];
+                    info_str = sprintf('%s\n         拟合度: %.1f%%', short_tf, obj.results.fitting);
+                else
+                    info_str = sprintf('%s          拟合度: %.1f%%', tf_str, obj.results.fitting);
+                end
+
+                set(obj.controls.info_text, 'String', info_str, 'ForegroundColor', 'black');
                 set(obj.controls.identify, 'Enable', 'on');
-                
-                % 显示传递函数
-                msgbox(sprintf('辨识结果:\n%s\n拟合度: %.2f%%', ...
-                    tf_str, obj.results.fitting), '辨识完成');
                 
                 % 通知应用程序
                 if ~isempty(obj.app_handle)
@@ -313,7 +317,6 @@ classdef SystemIDModule < BaseModule
                     msgbox(sprintf('模型已导出到:\n%s\n并保存到工作空间', fullpath), '导出成功');
                     
                 elseif strcmpi(ext, '.mdl')
-                    % 导出为Simulink模型（简化版）
                     try
                         % 创建简单模型
                         model_name = 'exported_system';

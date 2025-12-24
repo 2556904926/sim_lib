@@ -28,14 +28,8 @@ function startup()
     fprintf('\n欢迎使用系统辨识与控制器设计平台！\n');
     fprintf('主要功能:\n');
     fprintf('  1. 系统辨识 - 基于输入输出数据辨识系统模型\n');
-    fprintf('  2. PID设计 - 多种PID整定方法\n');
-    fprintf('  3. 控制器设计 - 支持多种控制器类型\n');
-    fprintf('  4. 仿真验证 - 验证控制器性能\n\n');
-    
-    fprintf('使用方法:\n');
-    fprintf('  1. 运行 main_app() 启动GUI界面\n');
-    fprintf('  2. 或直接使用核心类进行编程\n');
-    fprintf('  3. 运行 help_demo() 查看示例\n\n');
+    fprintf('  2. 控制器设计 - 支持多种控制器类型\n');
+    fprintf('  3. 仿真验证 - 验证控制器性能\n\n');
     
     fprintf('工具箱已成功初始化！\n');
 end

@@ -63,46 +63,159 @@ classdef SystemIdentifier < BaseSystem
             end
         end
         
+        % function identifySystem(obj)
+        %     % 执行辨识算法
+        %     data_iddata = iddata(obj.data.y, obj.data.u, obj.Ts);
+            
+        %     % 根据选择的方法进行辨识
+        %     switch obj.estimation_method
+        %         case 'tfest'
+        %             opt = tfestOptions('Display', 'off', 'SearchMethod', 'lm');
+        %             obj.sys_est = tfest(data_iddata, obj.den_order, obj.num_order, opt);
+        %         case 'ssest'
+        %             opt = ssestOptions('Display', 'off');
+        %             sys_ss = ssest(data_iddata, obj.den_order, opt);
+        %             obj.sys_est = tf(sys_ss);
+        %         case 'procest'
+        %             % 过程模型辨识（适合一阶/二阶系统）
+        %             sys_p = procest(data_iddata, 'P1D');
+        %             obj.sys_est = tf(sys_p);
+        %         otherwise
+        %             error('未知的辨识方法: %s', obj.estimation_method);
+        %     end
+            
+        %     % 计算拟合度
+        %     obj.calculateFitting();
+        % end
         function identifySystem(obj)
-            % 执行辨识算法
-            data_iddata = iddata(obj.data.y, obj.data.u, obj.Ts);
-            
-            % 根据选择的方法进行辨识
-            switch obj.estimation_method
-                case 'tfest'
-                    opt = tfestOptions('Display', 'off', 'SearchMethod', 'lm');
-                    obj.sys_est = tfest(data_iddata, obj.den_order, obj.num_order, opt);
-                case 'ssest'
-                    opt = ssestOptions('Display', 'off');
-                    sys_ss = ssest(data_iddata, obj.den_order, opt);
-                    obj.sys_est = tf(sys_ss);
-                case 'procest'
-                    % 过程模型辨识（适合一阶/二阶系统）
-                    sys_p = procest(data_iddata, 'P1D');
-                    obj.sys_est = tf(sys_p);
-                otherwise
-                    error('未知的辨识方法: %s', obj.estimation_method);
+            % 执行辨识算法 - 直接版本
+            try
+                % 检查数据
+                if isempty(obj.data) || ~isfield(obj.data, 'y') || ~isfield(obj.data, 'u')
+                    error('数据未初始化或格式不正确');
+                end
+                
+                % 获取数据
+                y_raw = obj.data.y(:);
+                u_raw = obj.data.u(:);
+                
+                % 计算采样时间
+                if isfield(obj.data, 't') && length(obj.data.t) >= 2
+                    Ts = obj.data.t(2) - obj.data.t(1);
+                else
+                    Ts = 0.001;  % 默认值
+                end
+                
+                fprintf('创建iddata对象...\n');
+                fprintf('  使用数据点数: %d\n', length(u_raw));
+                
+                data = iddata(y_raw, u_raw, Ts, ...
+                    'TimeUnit', 'seconds', ...
+                    'InputName', 'u', 'OutputName', 'y');
+                
+                % 设置辨识选项
+                opt = tfestOptions;
+                opt.Display = 'on';
+                opt.SearchMethod = 'lm';
+                opt.InitialCondition = 'auto';
+                opt.WeightingFilter = [];
+                
+                fprintf('开始 %d阶/%d阶 系统辨识...\n', obj.num_order, obj.den_order);
+                
+                % 系统辨识
+                obj.sys_est = tfest(data, obj.den_order, obj.num_order, opt);
+
+                obj.sys_est
+
+                fprintf('系统辨识完成！\n');
+                
+                % 计算拟合度
+                obj.calculateFitting();
+                
+            catch ME
+                fprintf('辨识失败: %s\n', ME.message);
+                rethrow(ME);
             end
-            
-            % 计算拟合度
-            obj.calculateFitting();
         end
         
+        % function calculateFitting(obj)
+        %     % 计算模型拟合度
+        %     y_sim = lsim(obj.sys_est, obj.data.u, obj.data.t);
+        %     y_meas = obj.data.y;
+            
+        %     residual = y_meas - y_sim;
+        %     ss_res = sum(residual.^2);
+        %     ss_tot = sum((y_meas - mean(y_meas)).^2);
+        %     obj.fitting_percent = max(0, (1 - ss_res/ss_tot) * 100);
+            
+        %     % 存储验证指标
+        %     obj.validation_metrics = struct();
+        %     obj.validation_metrics.mse = mean(residual.^2);
+        %     obj.validation_metrics.rmse = sqrt(obj.validation_metrics.mse);
+        %     obj.validation_metrics.mae = mean(abs(residual));
+        % end
         function calculateFitting(obj)
             % 计算模型拟合度
-            y_sim = lsim(obj.sys_est, obj.data.u, obj.data.t);
-            y_meas = obj.data.y;
-            
-            residual = y_meas - y_sim;
-            ss_res = sum(residual.^2);
-            ss_tot = sum((y_meas - mean(y_meas)).^2);
-            obj.fitting_percent = max(0, (1 - ss_res/ss_tot) * 100);
-            
-            % 存储验证指标
-            obj.validation_metrics = struct();
-            obj.validation_metrics.mse = mean(residual.^2);
-            obj.validation_metrics.rmse = sqrt(obj.validation_metrics.mse);
-            obj.validation_metrics.mae = mean(abs(residual));
+            try
+                % 确保数据是列向量
+                t_data = obj.data.t(:);
+                u_data = obj.data.u(:);
+                y_meas = obj.data.y(:);
+                
+                % 使用lsim计算模型输出
+                y_sim = lsim(obj.sys_est, u_data, t_data);
+                
+                % 确保y_sim是列向量
+                y_sim = y_sim(:);
+                
+                % 检查长度是否匹配
+                if length(y_sim) ~= length(y_meas)
+                    % 如果长度不匹配，尝试截断
+                    min_len = min(length(y_sim), length(y_meas));
+                    y_sim = y_sim(1:min_len);
+                    y_meas = y_meas(1:min_len);
+                end
+                
+                % 计算残差
+                residual = y_meas - y_sim;
+                
+                % 计算拟合度（R²或NRMSE）
+                ss_res = sum(residual.^2);           % 残差平方和
+                ss_tot = sum((y_meas - mean(y_meas)).^2);  % 总平方和
+                
+                if ss_tot == 0
+                    % 如果输出是常数
+                    if ss_res == 0
+                        obj.fitting_percent = 100;  % 完美拟合
+                    else
+                        obj.fitting_percent = 0;    % 完全不拟合
+                    end
+                else
+                    % 计算拟合度百分比
+                    r_squared = 1 - ss_res/ss_tot;
+                    obj.fitting_percent = max(0, min(100, r_squared * 100));
+                end
+                
+                % 存储验证指标
+                obj.validation_metrics = struct();
+                obj.validation_metrics.mse = mean(residual.^2);
+                obj.validation_metrics.rmse = sqrt(obj.validation_metrics.mse);
+                obj.validation_metrics.mae = mean(abs(residual));
+                obj.validation_metrics.r_squared = obj.fitting_percent / 100;
+                
+                fprintf('拟合度计算完成: %.2f%%\n', obj.fitting_percent);
+                
+            catch ME
+                fprintf('拟合度计算失败: %s\n', ME.message);
+                
+                % 设置默认值
+                obj.fitting_percent = 0;
+                obj.validation_metrics = struct();
+                obj.validation_metrics.mse = Inf;
+                obj.validation_metrics.rmse = Inf;
+                obj.validation_metrics.mae = Inf;
+                obj.validation_metrics.r_squared = 0;
+            end
         end
         
         function validate(obj)
@@ -127,7 +240,6 @@ classdef SystemIdentifier < BaseSystem
             results.metrics = obj.validation_metrics;
             results.Ts = obj.Ts;
             
-            % 提取一阶/二阶系统参数
             results = obj.extractSystemParams(results);
         end
         
@@ -152,45 +264,39 @@ classdef SystemIdentifier < BaseSystem
                 results.system_type = 'higher_order';
             end
         end
-        
         function plotResults(obj, ax)
             % 绘制辨识结果
-            if nargin < 2
-                figure;
-                ax = subplot(2,2,1);
-            end
-            
-            % 创建多个子图
-            if isa(ax, 'matlab.graphics.axis.Axes')
-                % 单个坐标轴，创建子图
-                figure(ax.Parent);
-                clf;
+            try
+                if isempty(obj.sys_est) || isempty(obj.data)
+                    return;
+                end
                 
-                % 时域对比
-                ax1 = subplot(2,2,1);
-                obj.plotTimeDomain(ax1);
+                % 处理坐标轴输入
+                if nargin < 2
+                    figure;
+                    ax = [subplot(2,2,1), subplot(2,2,2), subplot(2,2,3), subplot(2,2,4)];
+                elseif numel(ax) == 1
+                    figure(ax.Parent);
+                    clf;
+                    ax = [subplot(2,2,1), subplot(2,2,2), subplot(2,2,3), subplot(2,2,4)];
+                elseif size(ax, 1) == 2 && size(ax, 2) == 2
+                    ax = [ax(1,1), ax(1,2), ax(2,1), ax(2,2)];
+                else
+                    ax = ax(:)';
+                end
                 
-                % 阶跃响应
-                ax2 = subplot(2,2,2);
-                obj.plotStepResponse(ax2);
+                % 绘制四个子图
+                try, obj.plotTimeDomain(ax(1)); catch, cla(ax(1)); title(ax(1), '时域对比'); end
+                try, obj.plotStepResponse(ax(2)); catch, cla(ax(2)); title(ax(2), '阶跃响应'); end
+                try, obj.plotPoleZero(ax(3)); catch, cla(ax(3)); title(ax(3), '零极点'); end
+                try, obj.plotBode(ax(4)); catch, cla(ax(4)); title(ax(4), 'Bode图'); end
                 
-                % 零极点图
-                ax3 = subplot(2,2,3);
-                obj.plotPoleZero(ax3);
+                drawnow;
                 
-                % Bode图
-                ax4 = subplot(2,2,4);
-                obj.plotBode(ax4);
-                
-            else
-                % 已提供坐标轴数组
-                obj.plotTimeDomain(ax(1));
-                obj.plotStepResponse(ax(2));
-                obj.plotPoleZero(ax(3));
-                obj.plotBode(ax(4));
+            catch ME
+                error('绘图失败: %s', ME.message);
             end
         end
-        
         function plotTimeDomain(obj, ax)
             % 绘制时域对比
             cla(ax);

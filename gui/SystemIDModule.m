@@ -263,15 +263,14 @@ classdef SystemIDModule < BaseModule
                 
                 % 更新信息
                 tf_str = obj.identifier.getTransferFunctionString();
-                if startsWith(tf_str, 'G(s) = ')
-                    tf_str = tf_str(8:end);
-                end
+                startsWith(tf_str, 'G(s) = ');
+
 
                 if length(tf_str) > 30
                     short_tf = [tf_str(1:30) '...'];
                     info_str = sprintf('%s\n         拟合度: %.1f%%', short_tf, obj.results.fitting);
                 else
-                    info_str = sprintf('%s          拟合度: %.1f%%', tf_str, obj.results.fitting);
+                    info_str = sprintf('%s  拟合度: %.1f%%', tf_str, obj.results.fitting);
                 end
 
                 set(obj.controls.info_text, 'String', info_str, 'ForegroundColor', 'black');

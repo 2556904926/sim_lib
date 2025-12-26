@@ -42,40 +42,6 @@ classdef PIDController < BaseController
                 obj.plant_model = plant_model;
             end
         end
-        function setDesignParams(obj, params)
-            % 设置设计参数
-            if isfield(params, 'design_method')
-                obj.design_method = params.design_method;
-            end
-            
-            if isfield(params, 'controller_type')
-                obj.controller_type = params.controller_type;
-            end
-            
-            % 其他参数
-            if isfield(params, 'Kp')
-                obj.Kp = params.Kp;
-            end
-            
-            if isfield(params, 'Ki')
-                obj.Ki = params.Ki;
-            end
-            
-            if isfield(params, 'Kd')
-                obj.Kd = params.Kd;
-            end
-            
-            if isfield(params, 'Ti')
-                obj.Ti = params.Ti;
-            end
-            
-            if isfield(params, 'Td')
-                obj.Td = params.Td;
-            end
-            
-            % 保存设计参数
-            obj.design_params = params;
-        end
         
         function design(obj)
             % 设计PID控制器
@@ -88,8 +54,7 @@ classdef PIDController < BaseController
             end
                                                                                   
             % 根据设计方法选择设计函数
-            %switch isempty(obj.design_method)
-            switch obj.design_method
+            switch isempty(obj.design_method)
                 case 'ziegler_nichols'
                     obj.designByZieglerNichols();
                 case 'cohen_coon'

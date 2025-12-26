@@ -1,13 +1,13 @@
 %% 运行这一整段代码就能生成 test_signal.mat
 clear; clc;
 
-% 生成数据
+% 生成数据(3, [1, 1]);
 t = (0:0.001:10)';
 u = zeros(size(t));
 u(t >= 1.0) = 1.0;
 u(t >= 5.0) = 0.5;
 
-sys = tf(3, [1, 1]);
+sys = tf
 y_clean = lsim(sys, u, t);
 y = y_clean + 0.02 * randn(size(y_clean));
 

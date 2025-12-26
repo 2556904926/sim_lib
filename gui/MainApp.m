@@ -25,7 +25,8 @@ classdef MainApp < handle
             obj.createModules();
             
             % 默认显示第一个模块
-            obj.switchModule('system_id');
+            %obj.switchModule('system_id');
+            obj.switchModule('controller');
         end
         
         function createMainWindow(obj)
@@ -74,7 +75,6 @@ classdef MainApp < handle
         end
         
         function createModules(obj)
-            % 创建模块
             modules_panel = uipanel('Parent', obj.fig, ...
                 'Position', [0.01, 0.01, 0.98, 0.88], ...
                 'BorderType', 'none', ...
@@ -90,7 +90,7 @@ classdef MainApp < handle
             obj.modules.help = obj.createHelpModule(modules_panel);
         end
         
-        function help_module = createHelpModule(obj, parent)
+        function help_module = createHelpModule(~, parent)
             % 创建帮助模块
             help_panel = uipanel('Parent', parent, ...
                 'Title', '帮助', ...
@@ -200,5 +200,6 @@ classdef MainApp < handle
             % 运行应用程序
             uiwait(obj.fig);
         end
+        
     end
 end

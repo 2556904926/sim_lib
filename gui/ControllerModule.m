@@ -279,49 +279,49 @@ classdef ControllerModule < BaseModule
         function onControllerTypeChanged(obj)
             % 控制器类型改变回调
             controller_idx = get(obj.controls.controller_type, 'Value');
-            controller_name = obj.controller_types{controller_idx, 1};
-            
+                    controller_name = obj.controller_types{controller_idx, 1};
+                    
             % 更新控制器对象
-            switch controller_name
-                case 'PID'
-                    obj.controller = PIDController();
-                    set(obj.controls.method_label, 'Visible', 'on');
-                    set(obj.controls.method, 'Visible', 'on');
-                    set(obj.controls.pid_type, 'Visible', 'on');
-                    
-                case 'Fuzzy'
-                    % 模糊控制器（需要Fuzzy Logic Toolbox）
-                    if exist('fis', 'file')
-                        obj.controller = FuzzyController();
-                    else
-                        warndlg('需要Fuzzy Logic Toolbox，使用PID控制器替代', '工具箱缺失');
-                        obj.controller = PIDController();
-                        set(obj.controls.controller_type, 'Value', 1);
+                    switch controller_name
+                        case 'PID'
+                            obj.controller = PIDController();
+                            set(obj.controls.method_label, 'Visible', 'on');
+                            set(obj.controls.method, 'Visible', 'on');
+                            set(obj.controls.pid_type, 'Visible', 'on');
+                            
+                        case 'Fuzzy'
+                            % 模糊控制器（需要Fuzzy Logic Toolbox）
+                            if exist('fis', 'file')
+                                obj.controller = FuzzyController();
+                            else
+                                warndlg('需要Fuzzy Logic Toolbox，使用PID控制器替代', '工具箱缺失');
+                                obj.controller = PIDController();
+                                set(obj.controls.controller_type, 'Value', 1);
+                            end
+                            set(obj.controls.method_label, 'Visible', 'off');
+                            set(obj.controls.method, 'Visible', 'off');
+                            set(obj.controls.pid_type, 'Visible', 'off');
+                            
+                        case 'MPC'
+                            % 模型预测控制（需要MPC Toolbox）
+                            if exist('mpc', 'file')
+                                obj.controller = MPCController();
+                            else
+                                warndlg('需要MPC Toolbox，使用PID控制器替代', '工具箱缺失');
+                                obj.controller = PIDController();
+                                set(obj.controls.controller_type, 'Value', 1);
+                            end
+                            set(obj.controls.method_label, 'Visible', 'off');
+                            set(obj.controls.method, 'Visible', 'off');
+                            set(obj.controls.pid_type, 'Visible', 'off');
+                            
+                        case 'LQR'
+                            % LQR控制器
+                            obj.controller = LQRController();
+                            set(obj.controls.method_label, 'Visible', 'off');
+                            set(obj.controls.method, 'Visible', 'off');
+                            set(obj.controls.pid_type, 'Visible', 'off');
                     end
-                    set(obj.controls.method_label, 'Visible', 'off');
-                    set(obj.controls.method, 'Visible', 'off');
-                    set(obj.controls.pid_type, 'Visible', 'off');
-                    
-                case 'MPC'
-                    % 模型预测控制（需要MPC Toolbox）
-                    if exist('mpc', 'file')
-                        obj.controller = MPCController();
-                    else
-                        warndlg('需要MPC Toolbox，使用PID控制器替代', '工具箱缺失');
-                        obj.controller = PIDController();
-                        set(obj.controls.controller_type, 'Value', 1);
-                    end
-                    set(obj.controls.method_label, 'Visible', 'off');
-                    set(obj.controls.method, 'Visible', 'off');
-                    set(obj.controls.pid_type, 'Visible', 'off');
-                    
-                case 'LQR'
-                    % LQR控制器
-                    obj.controller = LQRController();
-                    set(obj.controls.method_label, 'Visible', 'off');
-                    set(obj.controls.method, 'Visible', 'off');
-                    set(obj.controls.pid_type, 'Visible', 'off');
-            end
             
             % 更新UI
             obj.updateUI();
@@ -374,14 +374,14 @@ classdef ControllerModule < BaseModule
             % 滑块改变回调
             switch param
                 case 'kp'
-                    value = get(obj.controls.kp_slider, 'Value');
-                    set(obj.controls.kp_value, 'String', sprintf('%.3f', value));
+                value = get(obj.controls.kp_slider, 'Value');
+                set(obj.controls.kp_value, 'String', sprintf('%.3f', value));
                 case 'ti'
-                    value = get(obj.controls.ti_slider, 'Value');
-                    set(obj.controls.ti_value, 'String', sprintf('%.3f', value));
+                value = get(obj.controls.ti_slider, 'Value');
+                set(obj.controls.ti_value, 'String', sprintf('%.3f', value));
                 case 'td'
-                    value = get(obj.controls.td_slider, 'Value');
-                    set(obj.controls.td_value, 'String', sprintf('%.3f', value));
+                value = get(obj.controls.td_slider, 'Value');
+                set(obj.controls.td_value, 'String', sprintf('%.3f', value));
             end
         end
         
@@ -389,20 +389,20 @@ classdef ControllerModule < BaseModule
             % 手动参数改变回调
             switch param
                 case 'kp'
-                    value = str2double(get(obj.controls.kp_value, 'String'));
-                    if ~isnan(value) && value >= 0
-                        set(obj.controls.kp_slider, 'Value', value);
-                    end
+                value = str2double(get(obj.controls.kp_value, 'String'));
+                if ~isnan(value) && value >= 0
+                    set(obj.controls.kp_slider, 'Value', value);
+                end
                 case 'ti'
-                    value = str2double(get(obj.controls.ti_value, 'String'));
-                    if ~isnan(value) && value > 0
-                        set(obj.controls.ti_slider, 'Value', value);
-                    end
+                value = str2double(get(obj.controls.ti_value, 'String'));
+                if ~isnan(value) && value > 0
+                    set(obj.controls.ti_slider, 'Value', value);
+                end
                 case 'td'
-                    value = str2double(get(obj.controls.td_value, 'String'));
-                    if ~isnan(value) && value >= 0
-                        set(obj.controls.td_slider, 'Value', value);
-                    end
+                value = str2double(get(obj.controls.td_value, 'String'));
+                if ~isnan(value) && value >= 0
+                    set(obj.controls.td_slider, 'Value', value);
+                end
             end
         end
         
@@ -481,9 +481,9 @@ classdef ControllerModule < BaseModule
                         design_params.target_wc = 1;   % 目标穿越频率
                     end
                 end
-                
+ 
                 obj.controller.setDesignParams(design_params);
-                
+
                 % 执行设计
                 set(obj.controls.info_text, 'String', '正在设计...', 'ForegroundColor', 'blue');
                 set(obj.controls.design, 'Enable', 'off');
@@ -492,10 +492,9 @@ classdef ControllerModule < BaseModule
                 obj.controller.design();
                 obj.results = obj.controller.getParameters();
                 
-                % 更新显示
+
                 obj.controller.plotResults(obj.axes_handles);
-                
-                % 更新信息
+
                 if isa(obj.controller, 'PIDController')
                     perf = obj.controller.performance;
                     info_str = sprintf('设计完成!\nKp=%.3f, Ti=%.3f, Td=%.3f\nTr=%.3fs, OS=%.1f%%', ...
@@ -578,19 +577,18 @@ classdef ControllerModule < BaseModule
                 end
                 
                 % 生成参考输入
-                t = 0:0.01:t_final;
-                
-                switch ref_type
-                    case 'step'
-                        reference = ones(size(t));
-                    case 'ramp'
-                        reference = t / t_final;
-                    case 'sine'
-                        reference = 0.5 * sin(2*pi*t/t_final*2) + 0.5;
-                    case 'square'
-                        reference = 0.5 * square(2*pi*t/t_final*2) + 0.5;
+                t = 0:0.0001:t_final;
+                if strcmp(ref_type, 'step')
+                    reference = ones(size(t));
+                elseif strcmp(ref_type, 'ramp')
+                    reference = t / t_final;
+                elseif strcmp(ref_type, 'sine')
+                    reference = 0.5 * sin(2*pi*t/t_final*2) + 0.5;
+                elseif strcmp(ref_type, 'square')
+                    reference = 0.5 * square(2*pi*t/t_final*2) + 0.5;
+                else
+                    error('未知的参考输入类型');
                 end
-                
                 % 运行仿真
                 obj.controller.simulate(t_final, reference);
                 

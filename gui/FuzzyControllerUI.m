@@ -10,11 +10,14 @@ classdef FuzzyControllerUI < ControllerUIBase
     methods
         function obj = FuzzyControllerUI(parent_panel, app_handle)
             % 构造函数
+            if nargin < 2
+                error('FuzzyControllerUI需要两个参数：parent_panel和app_handle');
+            end
             obj = obj@ControllerUIBase(parent_panel, app_handle);
             if exist('fis', 'file')
                 obj.controller = FuzzyController();
             else
-                warndlg('需要Fuzzy Logic Toolbox', '工具箱缺失');
+                %warndlg('需要Fuzzy Logic Toolbox', '工具箱缺失');
             end
         end
         
@@ -144,12 +147,12 @@ classdef FuzzyControllerUI < ControllerUIBase
         
         function createAxes(obj, parent)
             % 创建绘图坐标轴
-            obj.controls.axes_handles = zeros(2, 2);
+            obj.controls.axes_handles = cell(2, 2);
             
             for i = 1:2
                 for j = 1:2
                     idx = (i-1)*2 + j;
-                    obj.controls.axes_handles(i,j) = subplot(2,2,idx, 'Parent', parent);
+                    obj.controls.axes_handles{i,j} = subplot(2,2,idx, 'Parent', parent);
                 end
             end
         end
@@ -203,15 +206,10 @@ classdef FuzzyControllerUI < ControllerUIBase
         end
         
         function updateUI(obj)
-            % 更新UI
-            if ~isempty(obj.controller) && ~isempty(obj.controller.plant_model)
-                % 如果有系统模型，更新信息
-                [num, den] = tfdata(obj.controller.plant_model, 'v');
-                sys_info = sprintf('系统模型: %d阶/%d阶', length(num)-1, length(den)-1);
-                set(obj.controls.info_text, 'String', sys_info, 'ForegroundColor', 'green');
-            else
-                set(obj.controls.info_text, 'String', '请先设置系统模型', 'ForegroundColor', 'blue');
-            end
+            % 调用父类的通用更新
+            updateUI@ControllerUIBase(obj);
+            
+            % 子类特定的更新：模糊参数显示可以在这里添加
         end
     end
 end

@@ -24,6 +24,10 @@ classdef MainApp < handle
             obj.createNavigation();
             obj.createModules();
             
+            % 设置默认系统模型 G(s) = 1/(s+1)
+            default_sys = tf([1], [1, 1]);
+            obj.updateSystemModel(default_sys);
+            
             % 默认显示第一个模块
             %obj.switchModule('system_id');
             obj.switchModule('controller');
@@ -189,11 +193,12 @@ classdef MainApp < handle
         
         function closeApp(obj)
             % 关闭应用程序
-            choice = questdlg('确定要退出吗？', '确认退出', '是', '否', '否');
+            delete(obj.fig);
+            % choice = questdlg('确定要退出吗？', '确认退出', '是', '否', '否');
             
-            if strcmp(choice, '是')
-                delete(obj.fig);
-            end
+            % if strcmp(choice, '是')
+            %     delete(obj.fig);
+            % end
         end
         
         function run(obj)

@@ -22,7 +22,7 @@ function startup()
     
     % 检查工具箱依赖
     fprintf('\n检查工具箱依赖...\n');
-    check_dependencies();
+    %check_dependencies();
     
     % 显示欢迎信息
     fprintf('\n欢迎使用系统辨识与控制器设计平台！\n');

@@ -18,7 +18,6 @@ classdef ControllerUIBase < handle
     methods (Abstract)
         createUI(obj)       % 创建UI
         designController(obj) % 设计控制器
-        updateUI(obj)       % 更新UI
     end
     
     methods
@@ -27,6 +26,11 @@ classdef ControllerUIBase < handle
             obj.parent_panel = parent_panel;
             obj.app_handle = app_handle;
             obj.controls = struct();
+        end
+        
+        function updateUI(obj)
+            % 默认的UI更新方法 - 子类可以重写添加特定逻辑
+            % 系统模型信息由 ControllerModule.updateInfo() 处理
         end
         
         function setController(obj, controller)
@@ -79,9 +83,17 @@ classdef ControllerUIBase < handle
             % 清除之前的绘图
             if isfield(obj.controls, 'axes_handles')
                 axes_handles = obj.controls.axes_handles;
-                for i = 1:length(axes_handles)
-                    if ishandle(axes_handles(i))
-                        cla(axes_handles(i));
+                if iscell(axes_handles)
+                    for i = 1:numel(axes_handles)
+                        if ishandle(axes_handles{i})
+                            cla(axes_handles{i});
+                        end
+                    end
+                else
+                    for i = 1:length(axes_handles)
+                        if ishandle(axes_handles(i))
+                            cla(axes_handles(i));
+                        end
                     end
                 end
             end

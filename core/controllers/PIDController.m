@@ -7,19 +7,30 @@ classdef PIDController < BaseController
         controller_type = 'PID'
         
         % PID参数
-        Kp
-        Ki
-        Kd
-        Ti
-        Td
+        Kp = 0
+        Ki = 0
+        Kd = 0
+        Ti = inf
+        Td = 0
         
         % 设计方法
         design_method = 'ziegler_nichols'
         
         % 频域特性
-        gain_margin
-        phase_margin
-        crossover_freq
+        gain_margin = inf       % 增益裕度 (dB)
+        phase_margin = inf      % 相位裕度 (°) 
+        crossover_freq = 0      % 穿越频率 (Hz)
+        
+        % 性能指标
+        rise_time = 0          % 上升时间 (s)
+        overshoot = 0          % 超调量 (%)
+        settling_time = 0      % 调节时间 (s)
+        peak = 0               % 峰值
+        peak_time = 0          % 峰值时间 (s)
+        steady_state_error = 0 % 稳态误差
+        
+        % 参考值
+        reference_value = 1    % 阶跃响应参考值
     end
     
     properties (Constant)
@@ -41,11 +52,13 @@ classdef PIDController < BaseController
             if nargin > 0
                 obj.plant_model = plant_model;
             end
+            obj.performance = struct();
         end
         function setDesignParams(obj, params)
             % 设置设计参数
             if isfield(params, 'design_method')
                 obj.design_method = params.design_method;
+                fprintf('设置design_method: %s\n', obj.design_method);
             end
             
             if isfield(params, 'controller_type')
@@ -72,6 +85,10 @@ classdef PIDController < BaseController
             if isfield(params, 'Td')
                 obj.Td = params.Td;
             end
+
+            if isfield(params, 'reference_value')
+                obj.reference_value = params.reference_value;
+            end
             
             % 保存设计参数
             obj.design_params = params;
@@ -88,7 +105,7 @@ classdef PIDController < BaseController
             end
                                                                                   
             % 根据设计方法选择设计函数
-            %switch isempty(obj.design_method)
+            fprintf('开始设计，使用方法: %s\n', obj.design_method);
             switch obj.design_method
                 case 'ziegler_nichols'
                     obj.designByZieglerNichols();
@@ -155,7 +172,11 @@ classdef PIDController < BaseController
             end
             
             if isfield(obj.design_params, 'controller_type')
-                ctype = obj.design_params.controller_type{1};
+                if iscell(obj.design_params.controller_type)
+                    ctype = obj.design_params.controller_type{1};
+                else
+                    ctype = obj.design_params.controller_type;
+                end
             else
                 ctype = 'PID';
             end
@@ -201,7 +222,17 @@ classdef PIDController < BaseController
             R = L / tau;
             
             % Cohen-Coon公式
-            switch obj.design_params.controller_type
+            if isfield(obj.design_params, 'controller_type')
+                if iscell(obj.design_params.controller_type)
+                    ctype = obj.design_params.controller_type{1};
+                else
+                    ctype = obj.design_params.controller_type;
+                end
+            else
+                ctype = 'PID';
+            end
+            
+            switch ctype
                 case 'P'
                     obj.Kp = (1/K) * (1 + 0.35*R/(1-R));
                 case 'PI'
@@ -469,11 +500,28 @@ classdef PIDController < BaseController
             % 计算闭环系统
             obj.closed_loop_sys = feedback(obj.controller * obj.plant_model, 1);
             
+            poles_cl = pole(obj.closed_loop_sys);
+            if any(real(poles_cl) >= 0)
+                warning('闭环系统不稳定！');
+                obj.performance.stable = false;
+            else
+                obj.performance.stable = true;
+            end
+            
             % 计算频域指标
             [gm, pm, wcg, wcp] = margin(obj.controller * obj.plant_model);
             obj.gain_margin = gm;
             obj.phase_margin = pm;
             obj.crossover_freq = wcp;
+
+            [y, t] = step(obj.closed_loop_sys, obj.reference_value);
+            obj.calculatePerformance(y, t);
+            obj.rise_time = obj.performance.rise_time;
+            obj.overshoot = obj.performance.overshoot;
+            obj.settling_time = obj.performance.settling_time;
+            obj.peak = obj.performance.peak;
+            obj.peak_time = obj.performance.peak_time;
+            obj.steady_state_error = obj.performance.steady_state_error;
         end
         
         function tune(obj, params)
@@ -494,26 +542,15 @@ classdef PIDController < BaseController
         end
         
         function validate(obj)
-            % 验证控制器设计
-            
-            % 检查稳定性
-            poles_cl = pole(obj.closed_loop_sys);
-            if any(real(poles_cl) >= 0)
-                warning('闭环系统不稳定！');
-                obj.performance.stable = false;
-            else
-                obj.performance.stable = true;
-            end
-            
-            % 计算性能指标
-            [y, t] = step(obj.closed_loop_sys, 10);
+
+            [y, t] = step(obj.closed_loop_sys, 1);
             obj.calculatePerformance(y, t);
             
-            fprintf('PID[%s]: Kp=%.3f/Ti=%.3f/Td=%.3f | 性能: tr=%.2fs/os=%.1f%%/ts=%.2fs | 稳定裕度: PM=%.1f°/GM=%.2f\n', ...
-            obj.design_method, obj.Kp, obj.Ti, obj.Td, ...
-            obj.performance.rise_time, obj.performance.overshoot, ...
-            obj.performance.settling_time, obj.phase_margin, obj.gain_margin);
-            fprintf('PID[%s]: Kp=:%.3f/Ki=%.3f/Kd=%.3f\n',obj.design_method,obj.Kp,obj.Ki,obj.Kd);
+            % 打印控制器参数和性能信息
+            fprintf('PID[%s]: Kp=%.3f, Ki=%.3f, Kd=%.3f | 性能: 上升时间=%.2fs, 超调量=%.1f%%, 调节时间=%.2fs | 裕度: PM=%.1f°, GM=%.2f\n', ...
+                obj.design_method, obj.Kp, obj.Ki, obj.Kd, ...
+                obj.rise_time, obj.overshoot, ...
+                obj.settling_time, obj.phase_margin, obj.gain_margin);
         end
         
         function params = getParameters(obj)

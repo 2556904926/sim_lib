@@ -5,6 +5,9 @@ classdef ControllerModule < BaseModule
         name = '控制器设计'
         description = '基于系统模型的控制器设计'
         
+        % 当前控制器实例
+        controller
+        
         % 控制器UI管理器
         controller_uis
         
@@ -19,6 +22,10 @@ classdef ControllerModule < BaseModule
             'LQR',      'LQR最优控制'
         };
     end
+
+
+
+    
     
     methods
         function obj = ControllerModule(parent, app_handle)
@@ -73,6 +80,16 @@ classdef ControllerModule < BaseModule
                 'Position', [90, y_pos, 120, 25], ...
                 'BackgroundColor', 'white', ...
                 'Callback', @(~,~) obj.onControllerTypeChanged());
+            
+            % 开始控制器设计按钮
+            obj.controls.design_controller = uicontrol('Parent', control_panel, ...
+                'Style', 'pushbutton', ...
+                'String', '开始控制器设计', ...
+                'Position', [230, y_pos-5, 120, 35], ...
+                'BackgroundColor', [0.2, 0.7, 0.3], ...
+                'ForegroundColor', 'white', ...
+                'FontWeight', 'bold', ...
+                'Callback', @(~,~) obj.designController());
             
             % 信息文本
             obj.controls.info_text = uicontrol('Parent', control_panel, ...
@@ -142,7 +159,9 @@ classdef ControllerModule < BaseModule
                 set(obj.controls.info_text, 'String', '请先设置系统模型', 'ForegroundColor', 'blue');
             else
                 [num, den] = tfdata(obj.current_ui.controller.plant_model, 'v');
-                sys_info = sprintf('系统模型: %d阶/%d阶', length(num)-1, length(den)-1);
+                num_length = length(num);
+                den_length = length(den);
+                sys_info = sprintf('系统模型: %d阶/%d阶',num_length-2,den_length - 1);
                 set(obj.controls.info_text, 'String', sys_info, 'ForegroundColor', 'green');
             end
         end

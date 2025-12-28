@@ -240,7 +240,7 @@ classdef SystemIDModule < BaseModule
                 den_order = get(obj.controls.den_order, 'Value');
                 method_idx = get(obj.controls.method, 'Value');
                 
-                methods = {'tfest', 'ssest', 'procest'};
+                methods = {'传递函数估计', '状态空间估计', '过程模型估计'};
                 method = methods{method_idx};
                 
                 % 配置辨识器

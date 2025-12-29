@@ -6,7 +6,7 @@ classdef PIDController < BaseController
         description = '比例-积分-微分控制器'
         controller_type = 'PID'
         
-        % PID参数
+% PID参数
         Kp = 0
         Ki = 0
         Kd = 0
@@ -86,8 +86,8 @@ classdef PIDController < BaseController
                 obj.Td = params.Td;
             end
 
-            if isfield(params, 'reference_value')
-                obj.reference_value = params.reference_value;
+            if isfield(params, 'reference')
+                obj.reference_value = params.reference;
             end
             
             % 保存设计参数
@@ -316,16 +316,51 @@ classdef PIDController < BaseController
         end
         
         function designManual(obj)
-            % 手动设置参数
-            if ~isfield(obj.design_params, 'Kp') || ...
-               ~isfield(obj.design_params, 'Ti') || ...
-               ~isfield(obj.design_params, 'Td')
-                error('手动设计需要提供Kp, Ti, Td参数');
+            if ~isfield(obj.design_params, 'Kp')
+                error('手动设计需要提供Kp参数');
             end
             
             obj.Kp = obj.design_params.Kp;
-            obj.Ti = obj.design_params.Ti;
-            obj.Td = obj.design_params.Td;
+            
+            if isfield(obj.design_params, 'Ki')
+                obj.Ki = obj.design_params.Ki;
+                if obj.Ki > 0
+                    obj.Ti = obj.Kp / obj.Ki;
+                else
+                    obj.Ti = inf;
+                end
+            elseif isfield(obj.design_params, 'Ti')
+                obj.Ti = obj.design_params.Ti;
+                if obj.Ti > 0
+                    obj.Ki = obj.Kp / obj.Ti;
+                else
+                    obj.Ki = 0;
+                end
+            else
+                obj.Ki = 0.1;
+                obj.Ti = obj.Kp / obj.Ki;
+            end
+            if isfield(obj.design_params, 'Kd')
+                obj.Kd = obj.design_params.Kd;
+                if obj.Kd > 0
+                    obj.Td = obj.Kd / obj.Kp;
+                else
+                    obj.Td = 0;
+                end
+            elseif isfield(obj.design_params, 'Td')
+                obj.Td = obj.design_params.Td;
+                if obj.Td > 0
+                    obj.Kd = obj.Kp * obj.Td;
+                else
+                    obj.Kd = 0;
+                end
+            else
+                obj.Kd = 0.01;
+                obj.Td = obj.Kd / obj.Kp;
+            end
+            
+            fprintf('手动调节模式: Kp=%.3f, Ki=%.3f, Kd=%.3f (Ti=%.3f, Td=%.3f)\n', ...
+                obj.Kp, obj.Ki, obj.Kd, obj.Ti, obj.Td);
         end
         
         function autoTune(obj)
@@ -667,10 +702,9 @@ classdef PIDController < BaseController
             cla(ax);
             
             % 模拟阶跃响应的控制信号
-            t = 0:0.01:10;
+            t = 0:0.001:10;
             y = step(obj.closed_loop_sys, t);
             
-            % 计算控制信号（简化）
             u = obj.Kp * (1 - y) + obj.Ki * cumtrapz(t, 1 - y) + ...
                 obj.Kd * gradient(1 - y, t);
             

@@ -230,14 +230,6 @@ classdef PIDControllerUI < ControllerUIBase
                 'Position', [120, 10, 150, 25], ...  % Y从-10改为10
                 'Callback', @(~,~) obj.onKdSliderChanged());
             
-            % 实时仿真按钮 - 调整位置
-            obj.controls.real_time_sim = uicontrol('Parent', tuning_panel, ...
-                'Style', 'pushbutton', ...
-                'String', '实时仿真', ...
-                'Position', [200, -20, 80, 30], ...  % Y从-40改为-20
-                'BackgroundColor', [0.4, 0.8, 0.4], ...
-                'ForegroundColor', 'white', ...
-                'Callback', @(~,~) obj.realTimeSimulate());
         end
         
         function createAxes(obj, parent)
@@ -363,6 +355,7 @@ classdef PIDControllerUI < ControllerUIBase
                 overshoot = str2double(get(obj.controls.overshoot, 'String'));
                 reference = str2double(get(obj.controls.reference, 'String'));
                 
+                
                 if isnan(rise_time) || isnan(overshoot) || isnan(reference)
                     errordlg('请输入有效的性能指标和参考值', '错误');
                     return;
@@ -462,11 +455,8 @@ classdef PIDControllerUI < ControllerUIBase
         end
         
         function plotResults(obj)
-        if isfield(obj.controller.design_params, 'reference')
-            ref = obj.controller.design_params.reference;
-        else
-            ref = 1.0;
-        end
+        
+        ref = obj.controller.reference_value;
         
         open_loop = obj.controller.controller * obj.controller.plant_model;
         
@@ -527,37 +517,19 @@ classdef PIDControllerUI < ControllerUIBase
         cla(ax4);
         axis(ax4, 'off');  % 关闭坐标轴
         
-        % 获取PID参数
-        if isfield(obj.controller.design_params, 'Kp')
-            Kp = obj.controller.design_params.Kp;
-        else
-            Kp = 0;
-        end
-        if isfield(obj.controller.design_params, 'Ki')
-            Ki = obj.controller.design_params.Ki;
-        else
-            Ki = 0;
-        end
-        if isfield(obj.controller.design_params, 'Kd')
-            Kd = obj.controller.design_params.Kd;
-        else
-            Kd = 0;
-        end
-        
-        % 显示参数
         text(ax4, 0.1, 0.9, sprintf('PID参数:'), 'FontSize', 10, 'FontWeight', 'bold');
-        text(ax4, 0.1, 0.8, sprintf('Kp = %.4f', Kp), 'FontSize', 9);
-        text(ax4, 0.1, 0.7, sprintf('Ki = %.4f', Ki), 'FontSize', 9);
-        text(ax4, 0.1, 0.6, sprintf('Kd = %.4f', Kd), 'FontSize', 9);
+        text(ax4, 0.1, 0.8, sprintf('Kp = %.4f', obj.controller.Kp), 'FontSize', 9);
+        text(ax4, 0.1, 0.7, sprintf('Ki = %.4f', obj.controller.Ki), 'FontSize', 9);
+        text(ax4, 0.1, 0.6, sprintf('Kd = %.4f', obj.controller.Kd), 'FontSize', 9);
         
         text(ax4, 0.1, 0.5, sprintf('时域响应参数:'), 'FontSize', 10, 'FontWeight', 'bold');
-        text(ax4, 0.1, 0.4, sprintf('上升时间 = %.4f s', step_info.RiseTime), 'FontSize', 9);
-        text(ax4, 0.1, 0.3, sprintf('超调量 = %.2f%%', step_info.Overshoot), 'FontSize', 9);
-        text(ax4, 0.1, 0.2, sprintf('调节时间 = %.4f s', step_info.SettlingTime), 'FontSize', 9);
+        text(ax4, 0.1, 0.4, sprintf('上升时间 = %.4f s', obj.controller.rise_time), 'FontSize', 9);
+        text(ax4, 0.1, 0.3, sprintf('超调量 = %.2f%%', obj.controller.overshoot), 'FontSize', 9);
+        text(ax4, 0.1, 0.2, sprintf('调节时间 = %.4f s', obj.controller.settling_time), 'FontSize', 9);
         
         text(ax4, 0.1, 0.1, sprintf('稳定性裕度:'), 'FontSize', 10, 'FontWeight', 'bold');
-        text(ax4, 0.1, 0.0, sprintf('增益裕度 = %.2f dB', 20*log10(Gm)), 'FontSize', 9);
-        text(ax4, 0.5, 0.9, sprintf('相位裕度 = %.2f°', Pm), 'FontSize', 9);
+        text(ax4, 0.1, 0.0, sprintf('增益裕度 = %.2f dB', obj.controller.gain_margin), 'FontSize', 9);
+        text(ax4, 0.5, 0.9, sprintf('相位裕度 = %.2f°', obj.controller.phase_margin), 'FontSize', 9);
         
         title(ax4, '系统参数');
         end

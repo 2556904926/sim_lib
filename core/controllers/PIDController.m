@@ -542,9 +542,6 @@ classdef PIDController < BaseController
         end
         
         function validate(obj)
-
-            [y, t] = step(obj.closed_loop_sys, 1);
-            obj.calculatePerformance(y, t);
             
             % 打印控制器参数和性能信息
             fprintf('PID[%s]: Kp=%.3f, Ki=%.3f, Kd=%.3f | 性能: 上升时间=%.2fs, 超调量=%.1f%%, 调节时间=%.2fs | 裕度: PM=%.1f°, GM=%.2f\n', ...

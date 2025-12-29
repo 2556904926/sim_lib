@@ -127,8 +127,8 @@ classdef MainApp < handle
                 '  • Ctrl+E: 导出结果';
                 '  • F1: 显示帮助';
                 '';
-                '作者: Your Name';
-                '版本: 1.0.0';
+                '作者: 周向阳';
+                '版本: 1.0.1';
             };
             
             uicontrol('Parent', help_panel, ...

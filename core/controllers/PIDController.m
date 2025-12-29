@@ -6,7 +6,7 @@ classdef PIDController < BaseController
         description = '比例-积分-微分控制器'
         controller_type = 'PID'
         
-% PID参数
+        % PID参数
         Kp = 0
         Ki = 0
         Kd = 0
@@ -30,19 +30,24 @@ classdef PIDController < BaseController
         steady_state_error = 0 % 稳态误差
         
         % 参考值
-        reference_value = 1    % 阶跃响应参考值
+        reference_value = 1     % 阶跃响应参考值
+        target_pm = 60          % 目标相位裕度 (°)
+        target_rise_time = 10   % 目标上升时间 (s)
+        target_overshoot = 0    % 目标超调量 (%)
+
+
     end
     
     properties (Constant)
         % 设计方法列表
         DESIGN_METHODS = {
-            'ziegler_nichols',   'Ziegler-Nichols';
-            'cohen_coon',        'Cohen-Coon';
-            'imc',               '内模控制(IMC)';
-            'itae',              'ITAE最优';
+            'ziegler_nichols',   'Ziegler-Nichols';%(1~2)阶系统
+            'cohen_coon',        'Cohen-Coon';     %1阶系统
+            'imc',               '内模控制(IMC)';   %大多数系统
+            'itae',              'ITAE最优';       %大多数系统
             'manual',            '手动调节';
-            'auto_tune',         '自动整定';
-            'frequency',         '频域设计'
+            'timedesign',        '时域设计';        %大多数系统
+            'frequency',         '频域设计'         %大多数系统
         };
     end
     
@@ -65,7 +70,7 @@ classdef PIDController < BaseController
                 obj.controller_type = params.controller_type;
             end
             
-            % 其他参数
+            % 手动参数设置
             if isfield(params, 'Kp')
                 obj.Kp = params.Kp;
             end
@@ -86,8 +91,21 @@ classdef PIDController < BaseController
                 obj.Td = params.Td;
             end
 
-            if isfield(params, 'reference')
-                obj.reference_value = params.reference;
+            %目标参数设置
+            if isfield(params, 'reference_value')
+                obj.reference_value = params.reference_value;
+            end
+
+            if isfield(params, 'target_pm')
+                obj.target_pm = params.target_pm;
+            end
+
+            if isfield(params, 'target_rise_time')
+                obj.target_rise_time = params.target_rise_time;
+            end
+            
+            if isfield(params, 'target_overshoot')
+                obj.target_overshoot = params.target_overshoot;
             end
             
             % 保存设计参数
@@ -117,7 +135,7 @@ classdef PIDController < BaseController
                     obj.designByITAE();
                 case 'manual'
                     obj.designManual();
-                case 'auto_tune'
+                case 'timedesign'
                     obj.autoTune();
                 case 'frequency'
                     obj.designByFrequency();
@@ -197,22 +215,14 @@ classdef PIDController < BaseController
                 otherwise
                     error('未知的控制器类型: %s', ctype);
             end
+            obj.TitoKi(obj.Ti, obj.Td);
             
-            % 根据性能目标微调
-            obj.adjustForPerformance();
         end
         
         function designByCohenCoon(obj)
             % Cohen-Coon方法（适合有延迟的一阶系统）
             
             sys_params = obj.analyzeSystem();
-            
-            if ~strcmp(sys_params.type, 'first_order') || sys_params.delay <= 0
-                warning('Cohen-Coon方法更适合有延迟的一阶系统，自动切换为Z-N方法');
-                obj.design_method = 'ziegler_nichols';
-                obj.designByZieglerNichols();
-                return;
-            end
             
             K = sys_params.gain;
             tau = sys_params.tau;
@@ -243,6 +253,7 @@ classdef PIDController < BaseController
                     obj.Ti = tau * (2.5 - 2.0*R) / (1 - 0.39*R);
                     obj.Td = 0.37 * tau * R / (1 - 0.81*R);
             end
+            obj.TitoKi(obj.Ti, obj.Td);
         end
         
         function designByIMC(obj)
@@ -274,7 +285,7 @@ classdef PIDController < BaseController
                     obj.Ti = tau;
                     obj.Td = 0;
                 end
-                
+                obj.TitoKi(obj.Ti, obj.Td); 
             else
                 error('IMC方法目前只支持一阶系统');
             end
@@ -313,111 +324,77 @@ classdef PIDController < BaseController
                     obj.Td = 0;
                 end
             end
+            obj.TitoKi(obj.Ti, obj.Td);
         end
         
         function designManual(obj)
-            if ~isfield(obj.design_params, 'Kp')
-                error('手动设计需要提供Kp参数');
+            if isfield(obj.design_params, 'Kp')
+                obj.Kp = obj.design_params.Kp;
             end
-            
-            obj.Kp = obj.design_params.Kp;
             
             if isfield(obj.design_params, 'Ki')
                 obj.Ki = obj.design_params.Ki;
-                if obj.Ki > 0
-                    obj.Ti = obj.Kp / obj.Ki;
-                else
-                    obj.Ti = inf;
-                end
-            elseif isfield(obj.design_params, 'Ti')
-                obj.Ti = obj.design_params.Ti;
-                if obj.Ti > 0
-                    obj.Ki = obj.Kp / obj.Ti;
-                else
-                    obj.Ki = 0;
-                end
-            else
-                obj.Ki = 0.1;
-                obj.Ti = obj.Kp / obj.Ki;
             end
+            
             if isfield(obj.design_params, 'Kd')
                 obj.Kd = obj.design_params.Kd;
-                if obj.Kd > 0
-                    obj.Td = obj.Kd / obj.Kp;
-                else
-                    obj.Td = 0;
-                end
-            elseif isfield(obj.design_params, 'Td')
-                obj.Td = obj.design_params.Td;
-                if obj.Td > 0
-                    obj.Kd = obj.Kp * obj.Td;
-                else
-                    obj.Kd = 0;
-                end
-            else
-                obj.Kd = 0.01;
-                obj.Td = obj.Kd / obj.Kp;
             end
-            
-            fprintf('手动调节模式: Kp=%.3f, Ki=%.3f, Kd=%.3f (Ti=%.3f, Td=%.3f)\n', ...
-                obj.Kp, obj.Ki, obj.Kd, obj.Ti, obj.Td);
         end
+        
         
         function autoTune(obj)
-            % 自动整定（简化版）
+            if isempty(obj.plant_model)
+                error('请先设置被控对象模型');
+            end
             
-            % 获取系统频域特性
-            [gm, pm, wcg, wcp] = margin(obj.plant_model);
-            
-            if isinf(gm) || isinf(pm)
-                % 无法获取频域特性，使用阶跃响应法
-                step_info = stepinfo(obj.plant_model);
-                
-                if step_info.Overshoot > 0
-                    % 有超调系统
-                    obj.Kp = 0.6 * dcgain(obj.plant_model) / step_info.Peak;
-                    obj.Ti = step_info.PeakTime * 2;
-                    obj.Td = step_info.PeakTime / 6;
-                else
-                    % 无超调系统
-                    obj.Kp = 0.5 / dcgain(obj.plant_model);
-                    obj.Ti = step_info.SettlingTime / 3;
-                    obj.Td = 0;
-                end
+
+            if isfield(obj.design_params, 'controller_type')
+                ctype = obj.design_params.controller_type;
             else
-                % 基于频域特性整定
-                obj.Kp = 0.5 * gm;
-                obj.Ti = 2 * pi / wcg;
-                obj.Td = 0.125 * obj.Ti;
+                ctype = 'PID';  % 默认
+            end
+            
+            try
+                [C, info] = pidtune(obj.plant_model, ctype);
+                [obj.Kp, obj.Ki, obj.Kd] = piddata(C);
+                
+                fprintf('自动整定完成: Kp=%.4f, Ki=%.4f, Kd=%.4f\n', ...
+                    obj.Kp, obj.Ki, obj.Kd);
+            catch ME
+                error('pidtune失败: %s', ME.message);
             end
         end
-        
+
         function designByFrequency(obj)
-            % 频域设计方法
             
-            % 获取设计目标
-            target_pm = obj.design_params.target_pm;  % 目标相位裕度
-            target_gm = obj.design_params.target_gm;  % 目标增益裕度
-            target_wc = obj.design_params.target_wc;  % 目标穿越频率
+            if isempty(obj.design_params)
+                error('请先设置设计参数');
+            end
             
-            % 分析被控对象频率特性
-            [gm0, pm0, wcg0, wcp0] = margin(obj.plant_model);
-            
-            % 计算需要的补偿
-            pm_needed = target_pm - pm0 + 5;  % 增加5度裕量
-            
-            % 设计相位超前/滞后补偿
-            if pm_needed > 0
-                % 需要相位超前
-                alpha = (1 + sind(pm_needed)) / (1 - sind(pm_needed));
-                obj.Td = 1 / (sqrt(alpha) * target_wc);
-                obj.Kp = sqrt(alpha) / abs(freqresp(obj.plant_model, target_wc));
-                obj.Ti = alpha * obj.Td;
+            if isfield(obj.design_params, 'target_pm')
+                obj.target_pm = obj.design_params.target_pm;
             else
-                % 需要相位滞后
-                obj.Kp = target_gm / gm0;
-                obj.Ti = 10 / target_wc;
-                obj.Td = 0;
+                obj.target_pm = 60;  % 默认60度
+            end
+            
+            opt = pidtuneOptions(...
+                'PhaseMargin', obj.target_pm, ...
+                'DesignFocus', 'reference-tracking');
+            
+            if isfield(obj.design_params, 'controller_type')
+                ctype = obj.design_params.controller_type;
+            else
+                ctype = 'PID';
+            end
+            
+            try
+                [C, info] = pidtune(obj.plant_model, ctype, opt);
+                [obj.Kp, obj.Ki, obj.Kd] = piddata(C);
+                
+                fprintf('频域设计完成: Kp=%.4f, Ki=%.4f, Kd=%.4f\n', ...
+                    obj.Kp, obj.Ki, obj.Kd);
+            catch ME
+                error('频域设计失败: %s', ME.message);
             end
         end
         
@@ -509,27 +486,24 @@ classdef PIDController < BaseController
             end
         end
         
-        function adjustForPerformance(obj)
-
-        end
-        
-        function createController(obj)
-            % 创建PID控制器模型
-            
-            % 计算Ki, Kd
-            if obj.Ti > 0
-                obj.Ki = obj.Kp / obj.Ti;
+        function TitoKi(obj,Ti,Td)
+            % 将Ti和Td转换为Ki和Kd
+            if Ti > 0
+                obj.Ki = 1 / Ti;
             else
                 obj.Ki = 0;
             end
-            
-            if obj.Td > 0
-                obj.Kd = obj.Kp * obj.Td;
+
+            if Td > 0
+                obj.Kd = Td;
             else
                 obj.Kd = 0;
             end
-            
-            % 创建连续PID控制器
+
+        end
+
+        function createController(obj)
+
             obj.controller = pid(obj.Kp, obj.Ki, obj.Kd);
             
             % 计算闭环系统
@@ -702,9 +676,10 @@ classdef PIDController < BaseController
             cla(ax);
             
             % 模拟阶跃响应的控制信号
-            t = 0:0.001:10;
+            t = 0:0.01:10;
             y = step(obj.closed_loop_sys, t);
             
+            % 计算控制信号（简化）
             u = obj.Kp * (1 - y) + obj.Ki * cumtrapz(t, 1 - y) + ...
                 obj.Kd * gradient(1 - y, t);
             

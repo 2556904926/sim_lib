@@ -7,7 +7,7 @@ u = zeros(size(t));
 u(t >= 1.0) = 1.0;
 u(t >= 5.0) = 0.5;
 
-sys = tf
+sys = tf(1,[1,2,1]);
 y_clean = lsim(sys, u, t);
 y = y_clean + 0.02 * randn(size(y_clean));
 

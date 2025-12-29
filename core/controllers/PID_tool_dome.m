@@ -13,17 +13,16 @@ fprintf('被控对象: G(s) = 1/(s+1)\n\n');
 %% 2. 测试所有设计方法 
 methods = {
     'ziegler_nichols',   'Ziegler-Nichols方法';
-    'cohen_coon',        'Cohen-Coon方法';
-    'imc',               '内模控制(IMC)方法';
-    'itae',              'ITAE最优整定';
-    'auto_tune',         '自动整定方法';
-    'frequency',         '频域设计方法';
-    'manual',            '手动调节方法';
+    % 'cohen_coon',        'Cohen-Coon方法';
+    % 'imc',               '内模控制(IMC)方法';
+    % 'itae',              'ITAE最优整定';
+    % 'auto_tune',         '自动整定方法';
+    % 'frequency',         '频域设计方法';
+    % 'manual',            '手动调节方法';
 };
 
-% 存储所有设计结果
 all_results = struct();
-
+    
 for i = 1:size(methods, 1)
     method_name = methods{i, 1};
     method_desc = methods{i, 2};
@@ -40,12 +39,13 @@ for i = 1:size(methods, 1)
         % 设置设计参数
         design_params = struct();
         design_params.controller_type = 'PID';  % 控制器类型
+        design_params.reference = 1;
         
         % 根据不同方法设置特定参数
         switch method_name
             case 'ziegler_nichols'
-                design_params.rise_time = 0.5;
-                design_params.overshoot = 5;
+                design_params.rise_time = 1;
+                design_params.overshoot = 1;
                 
             case 'cohen_coon'
                 % Cohen-Coon适用于有延迟系统，为演示添加延迟
@@ -122,63 +122,3 @@ for i = 1:size(methods, 1)
         end
     end
 end
-
-
-%% 4. 对比所有方法的阶跃响应
-figure('Name', '所有方法阶跃响应对比', 'Position', [200, 200, 1000, 600]);
-hold on;
-
-colors = lines(length(methods));
-legend_entries = cell(1, 0);
-
-for i = 1:size(methods, 1)
-    method_name = methods{i, 1};
-    
-    if isfield(all_results, method_name)
-        % 获取该方法的控制器
-        pid_ctrl = PIDController(G);
-        pid_ctrl.design_method = method_name;
-        
-        % 恢复设计参数
-        switch method_name
-            case 'manual'
-                design_params = struct();
-                design_params.Kp = all_results.(method_name).Kp;
-                design_params.Ti = all_results.(method_name).Ti;
-                design_params.Td = all_results.(method_name).Td;
-            case 'imc'
-                design_params = struct();
-                design_params.lambda = 0.5;
-            case 'frequency'
-                design_params = struct();
-                design_params.target_pm = 60;
-                design_params.target_gm = 10;
-                design_params.target_wc = 2;
-            otherwise
-                design_params = struct();
-                design_params.controller_type = 'PID';
-        end
-        
-        pid_ctrl.design_params = design_params;
-        pid_ctrl.design();
-        
-        % 绘制阶跃响应
-        [y, t] = step(pid_ctrl.closed_loop_sys, 5);
-        plot(t, y, 'LineWidth', 1.5, 'Color', colors(i,:));
-        
-        legend_entries{end+1} = methods{i, 2};
-    end
-end
-
-% 添加参考线
-plot([0, 5], [1, 1], 'k--', 'LineWidth', 1, 'HandleVisibility', 'off');
-plot([0, 5], [1.05, 1.05], 'k:', 'LineWidth', 0.5, 'HandleVisibility', 'off');
-plot([0, 5], [0.95, 0.95], 'k:', 'LineWidth', 0.5, 'HandleVisibility', 'off');
-
-grid on;
-xlabel('时间 (s)');
-ylabel('输出');
-title('不同PID设计方法的阶跃响应对比');
-legend(legend_entries, 'Location', 'best');
-xlim([0, 5]);
-ylim([0, 1.5]);

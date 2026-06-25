@@ -1,0 +1,7 @@
+Path	Symbol	Reason
+system_toolk\gui\SystemIDModule.m	new_system	undeployable
+system_toolk\gui\SystemIDModule.m	open_system	undeployable
+system_toolk\gui\SystemIDModule.m	add_block	undeployable
+system_toolk\gui\SystemIDModule.m	add_line	undeployable
+system_toolk\gui\SystemIDModule.m	save_system	undeployable
+system_toolk\gui\SystemIDModule.m	close_system	undeployable

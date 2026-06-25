@@ -1,0 +1,7 @@
+Path	Symbol	Reason
+My Python Pa\gui\SystemIDModule.m	new_system	undeployable
+My Python Pa\gui\SystemIDModule.m	open_system	undeployable
+My Python Pa\gui\SystemIDModule.m	add_block	undeployable
+My Python Pa\gui\SystemIDModule.m	add_line	undeployable
+My Python Pa\gui\SystemIDModule.m	save_system	undeployable
+My Python Pa\gui\SystemIDModule.m	close_system	undeployable

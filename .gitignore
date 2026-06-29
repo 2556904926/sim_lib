@@ -16,7 +16,7 @@
 *.mltbx
 
 # Deployable archives
-*.ctf
+
 
 # Generated helpsearch folders
 helpsearch*/

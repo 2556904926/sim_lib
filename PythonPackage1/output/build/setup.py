@@ -62,16 +62,16 @@ class InstallAndCleanBuildArea(install):
     
 if __name__ == '__main__':
     setup_dict = {
-        'name': 'system_ui-R2025b',
+        'name': 'identify_system-R2025b',
         'version': '25.2',
-        'description': 'A Python interface to system_ui',
+        'description': 'A Python interface to identify_system',
         'author': 'MathWorks',
         'url': 'https://www.mathworks.com/',
         'platforms': ['Linux', 'Windows', 'macOS'],
         'packages': [
-            'system_ui'
+            'identify_system'
         ],
-        'package_data': {'system_ui': ['*.ctf']}
+        'package_data': {'identify_system': ['*.ctf']}
     }
     
     if not 'bdist_wheel' in sys.argv[1:]:

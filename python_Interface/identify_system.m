@@ -51,6 +51,7 @@ switch cmd
         if obj_id <= length(objects) && ~isempty(objects{obj_id})
             objects{obj_id}.process(t, u, y);
         end
+        varargout{1} = [];  % ✅ 添加返回空值
         
     case 'get_results'
         % 获取完整结果
@@ -118,6 +119,7 @@ switch cmd
         if obj_id <= length(objects) && ~isempty(objects{obj_id})
             objects{obj_id}.plotResults();
         end
+        varargout{1} = [];  % ✅ 添加返回空值
         
     case 'destroy'
         % 销毁对象
@@ -125,6 +127,7 @@ switch cmd
         if obj_id <= length(objects) && ~isempty(objects{obj_id})
             objects{obj_id} = [];
         end
+        varargout{1} = [];  % ✅ 添加返回空值
         
     case 'list'
         % 列出所有对象

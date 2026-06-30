@@ -62,16 +62,17 @@ class InstallAndCleanBuildArea(install):
     
 if __name__ == '__main__':
     setup_dict = {
-        'name': 'cyg_matlab_add-R2025b',
+        'name': 'system_toolkit.m-R2025b',
         'version': '25.2',
-        'description': 'A Python interface to cyg_matlab_add',
+        'description': 'A Python interface to system_toolkit.m',
         'author': 'MathWorks',
         'url': 'https://www.mathworks.com/',
         'platforms': ['Linux', 'Windows', 'macOS'],
         'packages': [
-            'cyg_matlab_add'
+            'system_toolkit',
+            'system_toolkit.m'
         ],
-        'package_data': {'cyg_matlab_add': ['*.ctf']}
+        'package_data': {'system_toolkit.m': ['*.ctf']}
     }
     
     if not 'bdist_wheel' in sys.argv[1:]:

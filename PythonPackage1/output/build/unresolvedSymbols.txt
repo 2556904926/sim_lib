@@ -1,7 +1,1 @@
 Path	Symbol	Reason
-m\gui\SystemIDModule.m	new_system	undeployable
-m\gui\SystemIDModule.m	open_system	undeployable
-m\gui\SystemIDModule.m	add_block	undeployable
-m\gui\SystemIDModule.m	add_line	undeployable
-m\gui\SystemIDModule.m	save_system	undeployable
-m\gui\SystemIDModule.m	close_system	undeployable

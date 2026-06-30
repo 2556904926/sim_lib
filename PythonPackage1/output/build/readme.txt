@@ -1,4 +1,4 @@
-Identify_system MATLAB Python Package
+system_ui MATLAB Python Package
 
 1. Prerequisites for Deployment 
 
@@ -22,11 +22,11 @@ in the MathWorks Documentation Center.
 
 Verify that a Windows version of Python 3.9, 3.10, 3.11, and/or 3.12 is installed.
 
-2. Installing the Identify_system Package
+2. Installing the system_ui Package
 
 A. Change to the directory that contains the file setup.py and the subdirectory 
-Identify_system. If you do not have write permissions, copy all its contents to a 
-temporary location and change to that directory.
+system_ui. If you do not have write permissions, copy all its contents to a temporary 
+location and change to that directory.
 
 B. Execute the command:
 
@@ -40,11 +40,11 @@ the PYTHONPATH environment variable. For details, refer to:
     https://docs.python.org/3/installing/index.html
 
 
-3. Using the Identify_system Package
+3. Using the system_ui Package
 
-The Identify_system package is on your Python path. To import it into a Python script or 
+The system_ui package is on your Python path. To import it into a Python script or 
 session, execute:
 
-    import Identify_system
+    import system_ui
 
 If a namespace must be specified for the package, modify the import statement accordingly.

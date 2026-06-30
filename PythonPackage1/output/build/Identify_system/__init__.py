@@ -20,7 +20,7 @@ class _PathInitializer(object):
     SUPPORTED_PYTHON_VERSIONS = ['3_9', '3_10', '3_11', '3_12']
     RUNTIME_VERSION_W_DOTS = '25.2'
     RUNTIME_VERSION_W_UNDERSCORES = '25_2'
-    PACKAGE_NAME = 'Identify_system'
+    PACKAGE_NAME = 'identify_system'
     
     def set_interpreter_version(self):
         """Make sure the interpreter version is supported."""

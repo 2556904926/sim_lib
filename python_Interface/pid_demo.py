@@ -2,7 +2,7 @@
 测试 PID 控制器 Python 包
 """
 
-import pid_controller as pid
+import PidTool
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import signal
@@ -12,6 +12,8 @@ def test_pid_design():
     print("PID 控制器测试")
     print("=" * 50)
     
+    pid = PidTool.initialize()
+
     # 1. 创建对象
     print("\n1. 创建 PID 控制器对象")
     obj = pid.pid_controller('create', 'design_method', 'ziegler_nichols')
@@ -71,26 +73,5 @@ def test_pid_design():
     print("测试完成！")
     print("=" * 50)
 
-def test_manual_tune():
-    """手动调节测试"""
-    print("\n" + "=" * 50)
-    print("手动调节测试")
-    print("=" * 50)
-    
-    obj = pid.pid_controller('create')
-    pid.pid_controller('set_plant', obj, [1.0], [1.0, 0.8, 1.0])
-    
-    # 手动设置参数
-    pid.pid_controller('set_params', obj, 'Kp', 1.5, 'Ki', 0.5, 'Kd', 0.2)
-    pid.pid_controller('design', obj)
-    
-    kp = pid.pid_controller('get_kp', obj)
-    ki = pid.pid_controller('get_ki', obj)
-    kd = pid.pid_controller('get_kd', obj)
-    print(f"手动设置: Kp={kp}, Ki={ki}, Kd={kd}")
-    
-    pid.pid_controller('destroy', obj)
-
 if __name__ == "__main__":
     test_pid_design()
-    test_manual_tune()

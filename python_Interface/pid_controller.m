@@ -17,10 +17,8 @@ persistent objects;
 switch cmd
     case 'create'
         % 创建PID控制器对象
-        % 参数: 'design_method', 'controller_type' (可选)
         obj = PIDController();
         
-        % 解析设计参数
         params = struct();
         for i = 1:2:length(varargin)
             params.(varargin{i}) = varargin{i+1};
@@ -35,8 +33,6 @@ switch cmd
         varargout{1} = obj_id;
         
     case 'set_plant'
-        % 设置被控对象模型
-        % 用法: pid_controller('set_plant', obj_id, num, den)
         obj_id = varargin{1};
         num = varargin{2};
         den = varargin{3};
@@ -44,10 +40,9 @@ switch cmd
         if obj_id <= length(objects) && ~isempty(objects{obj_id})
             objects{obj_id}.plant_model = tf(num, den);
         end
+        varargout{1} = [];  % 返回空
         
     case 'set_params'
-        % 设置设计参数
-        % 用法: pid_controller('set_params', obj_id, 'Kp', 1.0, 'Ki', 0.5, ...)
         obj_id = varargin{1};
         params = struct();
         for i = 2:2:length(varargin)
@@ -57,16 +52,16 @@ switch cmd
         if obj_id <= length(objects) && ~isempty(objects{obj_id})
             objects{obj_id}.setDesignParams(params);
         end
+        varargout{1} = [];  % 返回空
         
     case 'design'
-        % 执行PID设计
         obj_id = varargin{1};
         if obj_id <= length(objects) && ~isempty(objects{obj_id})
             objects{obj_id}.design();
         end
+        varargout{1} = [];  % 返回空
         
     case 'get_params'
-        % 获取控制器参数
         obj_id = varargin{1};
         if obj_id <= length(objects) && ~isempty(objects{obj_id})
             params = objects{obj_id}.getParameters();
@@ -148,7 +143,6 @@ switch cmd
         end
         
     case 'tune'
-        % 手动调节参数
         obj_id = varargin{1};
         params = struct();
         for i = 2:2:length(varargin)
@@ -158,12 +152,14 @@ switch cmd
         if obj_id <= length(objects) && ~isempty(objects{obj_id})
             objects{obj_id}.tune(params);
         end
+        varargout{1} = [];  % 返回空
         
     case 'plot'
         obj_id = varargin{1};
         if obj_id <= length(objects) && ~isempty(objects{obj_id})
             objects{obj_id}.plotResults();
         end
+        varargout{1} = [];  % 返回空
         
     case 'list'
         varargout{1} = length(objects);
@@ -173,6 +169,7 @@ switch cmd
         if obj_id <= length(objects) && ~isempty(objects{obj_id})
             objects{obj_id} = [];
         end
+        varargout{1} = [];  % 返回空
         
     otherwise
         error('未知命令: %s。可用命令: create, set_plant, set_params, design, get_params, get_kp, get_ki, get_kd, get_performance, get_phase_margin, get_gain_margin, get_rise_time, get_overshoot, get_settling_time, tune, plot, list, destroy', cmd);

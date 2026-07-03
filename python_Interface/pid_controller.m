@@ -156,6 +156,9 @@ switch cmd
         
     case 'plot'
         obj_id = varargin{1};
+
+        set(0, 'DefaultFigureVisible', 'on');
+
         if obj_id <= length(objects) && ~isempty(objects{obj_id})
             objects{obj_id}.plotResults();
         end

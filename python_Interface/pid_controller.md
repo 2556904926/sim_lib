@@ -88,6 +88,22 @@ pid_controller('set_params', obj_id, 'Kp', Kp, 'Ki', Ki, 'Kd', Kd)
 | `manual` | `Kp`, `Ki`, `Kd` | `Ti`, `Td` | — |
 | `timedesign` | — | `target_rise_time`, `target_overshoot` | `overshoot = 0` |
 | `frequency` | — | `target_pm` | `60°`
+
+% Ziegler-Nichols + PI
+pid_controller('set_params', obj, 'design_method', 'ziegler_nichols', 'controller_type', 'PI');
+
+% IMC 指定 lambda
+pid_controller('set_params', obj, 'design_method', 'imc', 'lambda', 0.5, 'controller_type', 'PI');
+
+% 手动设定
+pid_controller('set_params', obj, 'design_method', 'manual', 'Kp', 1.0, 'Ki', 0.5, 'Kd', 0.1, 'controller_type', 'PI');
+
+% 频域设计指定相位裕度
+pid_controller('set_params', obj, 'design_method', 'frequency', 'target_pm', 65, 'controller_type', 'PI');
+
+% 时域设计
+pid_controller('set_params', obj, 'design_method', 'timedesign', 'target_rise_time', 2.0, 'target_overshoot', 5, 'controller_type', 'PI');
+
 ---
 
 ### 4. 设计控制器 - `'design'`

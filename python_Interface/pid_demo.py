@@ -23,8 +23,8 @@ def test_pid_design():
     print("\n2. 设置被控对象 (二阶系统)")
     # G(s) = 1 / (s^2 + 0.8s + 1)
 
-    num = [1.0]
-    den = [1.0, 1.0]
+    num = np.array([90.0])
+    den = np.array([1.0, 5000.0])
     pid.pid_controller('set_plant', obj, num, den)
     print(f"   ✓ 传递函数: {num} / {den}")
     

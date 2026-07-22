@@ -7,7 +7,7 @@ fprintf('========== 测试 pid_controller 接口 ==========\n\n');
 
 %% 1. create - 创建对象
 fprintf('1. create: ');
-obj = pid_controller('create', 'design_method', 'timedesign','controller_type','pi');
+obj = pid_controller('create', 'design_method', 'frequency','controller_type','pi');
 fprintf('obj_id = %d ✓\n', obj);
 
 %% 2. set_plant - 设置被控对象

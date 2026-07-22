@@ -1,0 +1,318 @@
+{
+    "stepplot":
+    {
+        "inputs":
+        [
+            {"name":"SYS", "kind":"required", "type":"DynamicSystem"},
+			{"name":"LineStyle", "kind":"ordered", "type":"char"},
+            {"name":"Marker", "kind":"ordered", "type":"char"},
+            {"name":"Color", "kind":"ordered", "type":"char"},
+			{"name":"t", "kind":"ordered", "type":"vector"},
+			{"name":"opts", "kind":"ordered", "type":"plotopts.TimeOptions"}
+        ],
+        "taskInfo":
+        {
+            "VisualizeTaskInfo":
+            {
+				"icon":"stepPlotWide",
+                "description":"Control:general:Tool_stepplot_Description",
+                "categories":"Controllib:plots:lblControlsToolbox",
+                "params":
+                [
+                    {"name":"SYS", "description":"Controllib:plots:strDynamicSystem"},
+                    {"name":"t", "description":"Controllib:plots:strTime"},
+					{"name":"Color", "description":"MATLAB:graphics:visualizedatatask:ColorChannel", "type":"choices={'default','r','g','b','c','m','y','k','w'}", "kind":"properties"},
+                    {"name":"LineStyle", "description":"MATLAB:graphics:visualizedatatask:LineStyleDesc", "type":"choices={'default','-','--',':','-.'}", "kind":"properties"},
+                    {"name":"Marker", "description":"MATLAB:graphics:visualizedatatask:MarkerDesc", "type":"choices={'default','o','+','*','.','x','_','|','s','d','^','v','>','<','p','h'}", "kind":"properties"},
+					{"name":"opts", "description":"Controllib:plots:strPlotOptions"}
+                ],
+
+				"codeFunction":"controllib.chart.internal.utils.generateControlsPlotCode",
+                "supportsOverlay": true
+            }
+        }
+    },
+
+    "impulseplot":
+    {
+        "inputs":
+        [
+            {"name":"SYS", "kind":"required", "type":"DynamicSystem"},
+			{"name":"LineStyle", "kind":"ordered", "type":"char"},
+            {"name":"Marker", "kind":"ordered", "type":"char"},
+            {"name":"Color", "kind":"ordered", "type":"char"},
+			{"name":"t", "kind":"ordered", "type":"vector"},
+			{"name":"opts", "kind":"ordered", "type":"plotopts.TimeOptions"}
+        ],
+        "taskInfo":
+        {
+            "VisualizeTaskInfo":
+            {
+				"icon":"impulsePlotWide",
+                "description":"Control:general:Tool_impulseplot_Description",
+                "categories":"Controllib:plots:lblControlsToolbox",
+                "params":
+                [
+                    {"name":"SYS", "description":"Controllib:plots:strDynamicSystem"},
+                    {"name":"t", "description":"Controllib:plots:strTime"},
+					{"name":"Color", "description":"MATLAB:graphics:visualizedatatask:ColorChannel", "type":"choices={'default','r','g','b','c','m','y','k','w'}", "kind":"properties"},
+                    {"name":"LineStyle", "description":"MATLAB:graphics:visualizedatatask:LineStyleDesc", "type":"choices={'default','-','--',':','-.'}", "kind":"properties"},
+                    {"name":"Marker", "description":"MATLAB:graphics:visualizedatatask:MarkerDesc", "type":"choices={'default','o','+','*','.','x','_','|','s','d','^','v','>','<','p','h'}", "kind":"properties"},
+					{"name":"opts", "description":"Controllib:plots:strPlotOptions"}
+                ],
+
+				"codeFunction":"controllib.chart.internal.utils.generateControlsPlotCode",
+                "supportsOverlay": true
+            }
+        }
+    },
+	
+    "bodeplot":
+    {
+        "inputs":
+        [
+            {"name":"SYS", "kind":"required", "type":"DynamicSystem"},
+			{"name":"LineStyle", "kind":"ordered", "type":"char"},
+            {"name":"Marker", "kind":"ordered", "type":"char"},
+            {"name":"Color", "kind":"ordered", "type":"char"},
+			{"name":"w", "kind":"ordered", "type":[["cell"],["vector"]]},
+			{"name":"opts", "kind":"ordered", "type":"plotopts.BodeOptions"}
+        ],
+        "taskInfo":
+        {
+            "VisualizeTaskInfo":
+            {
+				"icon":"bodePlotWide",
+                "description":"Control:general:Tool_bodeplot_Description",
+                "categories":"Controllib:plots:lblControlsToolbox",
+                "params":
+                [
+                    {"name":"SYS", "description":"Controllib:plots:strDynamicSystem"},
+                    {"name":"w", "description":"Controllib:plots:strFrequencies"},
+					{"name":"Color", "description":"MATLAB:graphics:visualizedatatask:ColorChannel", "type":"choices={'default','r','g','b','c','m','y','k','w'}", "kind":"properties"},
+                    {"name":"LineStyle", "description":"MATLAB:graphics:visualizedatatask:LineStyleDesc", "type":"choices={'default','-','--',':','-.'}", "kind":"properties"},
+                    {"name":"Marker", "description":"MATLAB:graphics:visualizedatatask:MarkerDesc", "type":"choices={'default','o','+','*','.','x','_','|','s','d','^','v','>','<','p','h'}", "kind":"properties"},
+					{"name":"opts", "description":"Controllib:plots:strPlotOptions"}
+                ],
+
+				"codeFunction":"controllib.chart.internal.utils.generateControlsPlotCode",
+                "supportsOverlay": true
+            }
+        }
+    },
+
+    "nicholsplot":
+    {
+        "inputs":
+        [
+            {"name":"SYS", "kind":"required", "type":"DynamicSystem"},
+			{"name":"LineStyle", "kind":"ordered", "type":"char"},
+            {"name":"Marker", "kind":"ordered", "type":"char"},
+            {"name":"Color", "kind":"ordered", "type":"char"},
+			{"name":"w", "kind":"ordered", "type":[["cell"],["vector"]]},
+			{"name":"opts", "kind":"ordered", "type":"plotopts.NicholsOptions"}
+        ],
+        "taskInfo":
+        {
+            "VisualizeTaskInfo":
+            {
+                "params":
+                [
+					{"name":"SYS", "description":"Controllib:plots:strDynamicSystem"},
+                    {"name":"w", "description":"Controllib:plots:strFrequencies"},
+					{"name":"Color", "description":"MATLAB:graphics:visualizedatatask:ColorChannel", "type":"choices={'default','r','g','b','c','m','y','k','w'}", "kind":"properties"},
+                    {"name":"LineStyle", "description":"MATLAB:graphics:visualizedatatask:LineStyleDesc", "type":"choices={'default','-','--',':','-.'}", "kind":"properties"},
+                    {"name":"Marker", "description":"MATLAB:graphics:visualizedatatask:MarkerDesc", "type":"choices={'default','o','+','*','.','x','_','|','s','d','^','v','>','<','p','h'}", "kind":"properties"},
+					{"name":"opts", "description":"Controllib:plots:strPlotOptions"}
+                ],
+                "icon":"nicholsPlotWide",
+                "description":"Control:general:Tool_nicholsplot_Description",
+                "categories":"Controllib:plots:lblControlsToolbox",
+				"codeFunction":"controllib.chart.internal.utils.generateControlsPlotCode",
+                "supportsOverlay": true
+            }
+        }
+    },
+
+    "nyquistplot":
+    {
+        "inputs":
+        [
+            {"name":"SYS", "kind":"required", "type":"DynamicSystem"},
+			{"name":"LineStyle", "kind":"ordered", "type":"char"},
+            {"name":"Marker", "kind":"ordered", "type":"char"},
+            {"name":"Color", "kind":"ordered", "type":"char"},
+			{"name":"w", "kind":"ordered", "type":[["cell"],["vector"]]},
+			{"name":"opts", "kind":"ordered", "type":"plotopts.NyquistOptions"}
+        ],
+        "taskInfo":
+        {
+            "VisualizeTaskInfo":
+            {
+                "params":
+                [
+					{"name":"SYS", "description":"Controllib:plots:strDynamicSystem"},
+                    {"name":"w", "description":"Controllib:plots:strFrequencies"},
+					{"name":"Color", "description":"MATLAB:graphics:visualizedatatask:ColorChannel", "type":"choices={'default','r','g','b','c','m','y','k','w'}", "kind":"properties"},
+                    {"name":"LineStyle", "description":"MATLAB:graphics:visualizedatatask:LineStyleDesc", "type":"choices={'default','-','--',':','-.'}", "kind":"properties"},
+                    {"name":"Marker", "description":"MATLAB:graphics:visualizedatatask:MarkerDesc", "type":"choices={'default','o','+','*','.','x','_','|','s','d','^','v','>','<','p','h'}", "kind":"properties"},
+					{"name":"opts", "description":"Controllib:plots:strPlotOptions"}
+                ],
+                "icon":"nyquistPlotWide",
+                "description":"Control:general:Tool_nyquistplot_Description",
+                "categories":"Controllib:plots:lblControlsToolbox",
+				"codeFunction":"controllib.chart.internal.utils.generateControlsPlotCode",
+                "supportsOverlay": true
+            }
+        }
+    },
+
+    "sigmaplot":
+    {
+        "inputs":
+        [
+            {"name":"SYS", "kind":"required", "type":"DynamicSystem"},
+			{"name":"LineStyle", "kind":"ordered", "type":"char"},
+            {"name":"Marker", "kind":"ordered", "type":"char"},
+            {"name":"Color", "kind":"ordered", "type":"char"},
+			{"name":"w", "kind":"ordered", "type":[["cell"],["vector"]]},
+			{"name":"type", "kind":"ordered", "type":"double"},
+			{"name":"opts", "kind":"ordered", "type":"plotopts.SigmaOptions"}
+        ],
+        "taskInfo":
+        {
+            "VisualizeTaskInfo":
+            {
+				"icon":"sigmaPlotWide",
+                "description":"Control:general:Tool_sigmaplot_Description",
+                "categories":"Controllib:plots:lblControlsToolbox",
+                "params":
+                [
+                    {"name":"SYS", "description":"Controllib:plots:strDynamicSystem"},
+                    {"name":"w", "description":"Controllib:plots:strFrequencies"},
+					{"name":"Color", "description":"MATLAB:graphics:visualizedatatask:ColorChannel", "type":"choices={'default','r','g','b','c','m','y','k','w'}", "kind":"properties"},
+                    {"name":"LineStyle", "description":"MATLAB:graphics:visualizedatatask:LineStyleDesc", "type":"choices={'default','-','--',':','-.'}", "kind":"properties"},
+                    {"name":"Marker", "description":"MATLAB:graphics:visualizedatatask:MarkerDesc", "type":"choices={'default','o','+','*','.','x','_','|','s','d','^','v','>','<','p','h'}", "kind":"properties"},
+					{"name":"opts", "description":"Controllib:plots:strPlotOptions"}
+                ],
+
+				"codeFunction":"controllib.chart.internal.utils.generateControlsPlotCode",
+                "supportsOverlay": true
+            }
+        }
+    },
+
+    "pzplot":
+    {
+        "inputs":
+        [
+            {"name":"SYS", "kind":"required", "type":"DynamicSystem"},
+            {"name":"Color", "kind":"ordered", "type":"char"},
+			{"name":"opts", "kind":"ordered", "type":"plotopts.PZOptions"}
+        ],
+        "taskInfo":
+        {
+            "VisualizeTaskInfo":
+            {
+				"icon":"pzPlotWide",
+                "description":"Control:general:Tool_pzplot_Description",
+                "categories":"Controllib:plots:lblControlsToolbox",
+                "params":
+                [
+                    {"name":"SYS", "description":"Controllib:plots:strDynamicSystem"},
+					{"name":"Color", "description":"MATLAB:graphics:visualizedatatask:ColorChannel", "type":"choices={'default','r','g','b','c','m','y','k','w'}", "kind":"properties"},
+					{"name":"opts", "description":"Controllib:plots:strPlotOptions"}
+                ],
+
+				"codeFunction":"controllib.chart.internal.utils.generateControlsPlotCode",
+                "supportsOverlay": true
+            }
+        }
+    },
+
+    "iopzplot":
+    {
+        "inputs":
+        [
+            {"name":"SYS", "kind":"required", "type":"DynamicSystem"},
+            {"name":"Color", "kind":"ordered", "type":"char"},
+			{"name":"opts", "kind":"ordered", "type":"plotopts.PZOptions"}
+        ],
+        "taskInfo":
+        {
+            "VisualizeTaskInfo":
+            {
+				"icon":"ioPzPlotWide",
+                "description":"Control:general:Tool_iopzplot_Description",
+                "categories":"Controllib:plots:lblControlsToolbox",
+                "params":
+                [
+                    {"name":"SYS", "description":"Controllib:plots:strDynamicSystem"},
+					{"name":"Color", "description":"MATLAB:graphics:visualizedatatask:ColorChannel", "type":"choices={'default','r','g','b','c','m','y','k','w'}", "kind":"properties"},
+					{"name":"opts", "description":"Controllib:plots:strPlotOptions"}
+                ],
+
+				"codeFunction":"controllib.chart.internal.utils.generateControlsPlotCode",
+                "supportsOverlay": true
+            }
+        }
+    },
+
+    "rlocusplot":
+    {
+        "inputs":
+        [
+            {"name":"SYS", "kind":"required", "type":"DynamicSystem"},
+			{"name":"LineStyle", "kind":"ordered", "type":"char"},
+            {"name":"Marker", "kind":"ordered", "type":"char"},
+            {"name":"Color", "kind":"ordered", "type":"char"},
+			{"name":"opts", "kind":"ordered", "type":"plotopts.PZOptions"}
+        ],
+        "taskInfo":
+        {
+            "VisualizeTaskInfo":
+            {
+				"icon":"rlocusPlotWide",
+                "description":"Control:general:Tool_rlocusplot_Description",
+                "categories":"Controllib:plots:lblControlsToolbox",
+                "params":
+                [
+                    {"name":"SYS", "description":"Controllib:plots:strDynamicSystem"},
+					{"name":"Color", "description":"MATLAB:graphics:visualizedatatask:ColorChannel", "type":"choices={'default','r','g','b','c','m','y','k','w'}", "kind":"properties"},
+                    {"name":"LineStyle", "description":"MATLAB:graphics:visualizedatatask:LineStyleDesc", "type":"choices={'default','-','--',':','-.'}", "kind":"properties"},
+                    {"name":"Marker", "description":"MATLAB:graphics:visualizedatatask:MarkerDesc", "type":"choices={'default','o','+','*','.','x','_','|','s','d','^','v','>','<','p','h'}", "kind":"properties"},
+					{"name":"opts", "description":"Controllib:plots:strPlotOptions"}
+                ],
+
+				"codeFunction":"controllib.chart.internal.utils.generateControlsPlotCode",
+                "supportsOverlay": true
+            }
+        }
+    },
+
+    "hsvplot":
+    {
+        "inputs":
+        [
+            {"name":"SYS", "kind":"required", "type":"DynamicSystem"},
+			{"name":"plotOpts", "kind":"ordered", "type":"plotopts.HSVOptions"}
+        ],
+        "taskInfo":
+        {
+            "VisualizeTaskInfo":
+            {
+				"icon":"hsvPlotWide",
+                "description":"Control:general:Tool_hsvplot_Description",
+                "categories":"Controllib:plots:lblControlsToolbox",
+                "params":
+                [
+                    {"name":"SYS", "description":"Controllib:plots:strDynamicSystem"},
+					{"name":"plotOpts", "description":"Controllib:plots:strPlotOptions"}
+                ],
+
+				"codeFunction":"controllib.chart.internal.utils.generateControlsPlotCode",
+                "supportsOverlay": false
+            }
+        }
+    }
+}

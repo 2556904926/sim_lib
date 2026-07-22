@@ -1,0 +1,40 @@
+{
+    "matlab.visualize.task.internal.VisualizeDataTask":
+    {
+        "role": "contributor",
+        "keywords": "nicholsplot,nyquistplot,bodeplot,sigmaplot,stepplot,impulseplot,pzplot,iopzplot,rlocusplot,hsvplot"
+    },
+    "ctrlguis.embeddedapps.ModelRateConverterApp": {
+        "name": "Convert Model Rate",
+        "keywords": "c2d,d2c,d2d,c2dOptions,d2cOptions,d2dOptions,continuous,discrete,discretize,sample,rate,convert,conversion,tustin,zoh,foh,prewarp",
+        "category": "controls_category",
+        "messageCatalog": "Control:general",
+        "docLink": "strcat(docroot,'/control/control.map'),'ConvertModelRateTaskHelp'",
+        "uniqueId": "control/ConvertModelRate",
+        "icon": "../../ctrlguis/ModelRateConverter_24px.png",
+        "quickAccessIcon": "../../ctrlguis/ModelRateConverter_16px.png",
+        "svgIcon": "convertModelRateApp"
+    },
+    "ctrlguis.embeddedapps.ModelReducerApp": {
+        "name": "Reduce Model Order",
+        "keywords": "Reducer,reduce,model,balred,freqsep,minreal",
+        "category": "controls_category",
+        "messageCatalog": "Control:general",
+        "docLink": "strcat(docroot,'/control/control.map'),'ReduceModelOrderTaskHelp'",
+        "uniqueId": "control/ReduceModelOrder",
+        "icon": "../../ctrlguis/ModelReducer_24px.png",
+        "quickAccessIcon": "../../ctrlguis/ModelReducer_16px.png",
+        "svgIcon": "modelReducerApp"
+    },
+    "ctrlguis.embeddedapps.PIDTunerApp": {
+        "name": "Tune PID Controller",
+        "keywords": "tune,pid,pi",
+        "category": "controls_category",
+        "messageCatalog": "Control:general",
+        "docLink": "strcat(docroot,'/control/control.map'),'TunePIDControllerTaskHelp'",
+        "uniqueId": "control/TunePIDController",
+        "icon": "../../ctrlguis/PIDTuner_24px.png",
+        "quickAccessIcon": "../../ctrlguis/PIDTuner_16px.png",
+        "svgIcon": "pidTunerApp"
+    }
+}

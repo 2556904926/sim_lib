@@ -12,6 +12,8 @@ function varargout = pid_controller(cmd, varargin)
 %   pid.pid_controller('plot', obj)
 %   pid.pid_controller('destroy', obj)
 
+%#function pidtune   % <--- 添加这一行，明确告诉编译器要包含 pidtune
+
 persistent objects;
 
 switch cmd

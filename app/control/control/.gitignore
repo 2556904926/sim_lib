@@ -1,0 +1,6 @@
+# -*-conf-*- See http://wiki/gitignore
+# Copyright 2012 The MathWorks, Inc.
+
+# Generated files
+/Contents.m
+

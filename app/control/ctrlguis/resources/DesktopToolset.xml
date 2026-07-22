@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2011-2024 The MathWorks, Inc. -->
+<!-- THIS FILE CONTRIBUTES TO THE MATLAB APPS & PLOTS GALLERY WHICH IS CAREFULLY CURATED -->
+<!-- ADDITIONS AND CHANGES MUST GO THROUGH A DESIGN REVIEW PROCESS WITH SENIOR MANAGEMENT -->
+<!-- THIS PROCESS IS MANAGED BY THE MATLAB DESKTOP TEAM. CONSULT THE TOOLSTRIP GUIDELINES TO GET STARTED -->
+
+<toolset id="control_toolset" message_catalog="Control:general" contents_path="../control/" >
+    <!-- Apps gallery -->
+    <tool id="linearSystemAnalyzer">
+        <icon filename="LinearSystemAnalyzer_16px.png" path="../ctrlguis" id="linearSystemAnalyzerApp"/>
+        <icon filename="LinearSystemAnalyzer_24px.png" path="../ctrlguis" />
+        <callback>linearSystemAnalyzer</callback>
+        <capability>
+            <localClient>false</localClient>  <!-- Supported in MOTW -->
+        </capability>
+        <parent_tool id="control_products" toolset_id="apps_toolset" />
+    </tool>
+    <tool id="controlSystemDesigner">
+        <icon filename="ControlSystemDesigner_16px.png" path="../ctrlguis" id="controlSystemDesignerApp"/>
+        <icon filename="ControlSystemDesigner_24px.png" path="../ctrlguis" />
+        <callback>controlSystemDesigner</callback>
+        <capability>
+            <localClient>false</localClient>  <!-- Supported in MOTW -->
+        </capability>
+        <parent_tool id="control_products" toolset_id="apps_toolset" />
+    </tool>
+    <tool id="pidTuner">
+        <icon filename="PIDTuner_16px.png" path="../ctrlguis" id="pidTunerApp"/>
+        <icon filename="PIDTuner_24px.png" path="../ctrlguis" />
+        <callback>pidTuner</callback>
+        <capability>
+            <localClient>false</localClient>  <!-- Supported in MOTW -->
+        </capability>
+        <parent_tool id="control_products" toolset_id="apps_toolset"/>
+        <parent_tool id="favorites" toolset_id="apps_toolset" priority="900" />
+    </tool>
+    <tool id="controlSystemTuner">
+        <icon filename="ControlSystemTuner_16px.png" path="../ctrlguis" id="controlSystemTunerApp"/>
+        <icon filename="ControlSystemTuner_24px.png" path="../ctrlguis" />
+        <callback>controlSystemTuner</callback>
+        <capability>
+            <localClient>false</localClient>  <!-- Supported in MOTW -->
+        </capability>
+        <parent_tool id="control_products" toolset_id="apps_toolset" />
+    </tool>
+    <tool id="modelReducer">
+        <icon filename="ModelReducer_16px.png" path="../ctrlguis" id="modelReducerApp"/>
+        <icon filename="ModelReducer_24px.png" path="../ctrlguis" />
+        <callback>modelReducer</callback>
+        <capability>
+            <localClient>false</localClient>  <!-- Supported in MOTW -->
+        </capability>
+        <parent_tool id="control_products" toolset_id="apps_toolset" />
+    </tool>
+    
+    <!-- Plots gallery -->
+    <tool id="bodeplot" handler_class="com.mathworks.mlwidgets.graphics.PlotToolSetHandler">
+        <icon filename="plottypectl-bodeplot.png" path="../../matlab/icons/control" id="bodePlotWide"/>
+        <icon filename="plotpickerctl-bodeplot.png" path="../../matlab/icons/control" />
+        <function>bodeplot</function>
+        <visibility>@(args) controlplotfunc('bodeplot',args)</visibility>
+        <parent_tool id="category_control" toolset_id="plot_toolset" />
+    </tool>
+    <tool id="nicholsplot" handler_class="com.mathworks.mlwidgets.graphics.PlotToolSetHandler">
+        <icon filename="plottypectl-nicholsplot.png" path="../../matlab/icons/control" id="nicholsPlotWide"/>
+        <icon filename="plotpickerctl-nicholsplot.png" path="../../matlab/icons/control" />
+        <function>nicholsplot</function>
+        <visibility>@(args) controlplotfunc('nicholsplot',args)</visibility>
+        <parent_tool id="category_control" toolset_id="plot_toolset" />
+    </tool>
+    <tool id="nyquistplot" handler_class="com.mathworks.mlwidgets.graphics.PlotToolSetHandler">
+        <icon filename="plottypectl-nyquistplot.png" path="../../matlab/icons/control" id="nyquistPlotWide"/>
+        <icon filename="plotpickerctl-nyquistplot.png" path="../../matlab/icons/control" />
+        <function>nyquistplot</function>
+        <visibility>@(args) controlplotfunc('nyquistplot',args)</visibility>
+        <parent_tool id="category_control" toolset_id="plot_toolset" />
+    </tool>
+    <tool id="sigmaplot" handler_class="com.mathworks.mlwidgets.graphics.PlotToolSetHandler">
+        <icon filename="plottypectl-sigmaplot.png" path="../../matlab/icons/control" id="sigmaPlotWide"/>
+        <icon filename="plotpickerctl-sigmaplot.png" path="../../matlab/icons/control" />
+        <function>sigmaplot</function>
+        <visibility>@(args) controlplotfunc('sigmaplot',args)</visibility>
+        <parent_tool id="category_control" toolset_id="plot_toolset" />
+    </tool>
+    <tool id="rlocusplot" handler_class="com.mathworks.mlwidgets.graphics.PlotToolSetHandler">
+        <icon filename="plottypectl-rlocusplot.png" path="../../matlab/icons/control" id="rlocusPlotWide"/>
+        <icon filename="plotpickerctl-rlocusplot.png" path="../../matlab/icons/control" />
+        <function>rlocusplot</function>
+        <visibility>@(args) controlplotfunc('rlocusplot',args)</visibility>
+        <parent_tool id="category_control" toolset_id="plot_toolset" />
+    </tool>
+    <tool id="pzplot" handler_class="com.mathworks.mlwidgets.graphics.PlotToolSetHandler">
+        <icon filename="plottypectl-pzplot.png" path="../../matlab/icons/control" id="pzPlotWide"/>
+        <icon filename="plotpickerctl-pzplot.png" path="../../matlab/icons/control" />
+        <function>pzplot</function>
+        <visibility>@(args) controlplotfunc('pzplot',args)</visibility>
+        <parent_tool id="category_control" toolset_id="plot_toolset" />
+    </tool>
+    <tool id="iopzplot" handler_class="com.mathworks.mlwidgets.graphics.PlotToolSetHandler">
+        <icon filename="plottypectl-iopzplot.png" path="../../matlab/icons/control" id="ioPzPlotWide"/>
+        <icon filename="plotpickerctl-iopzplot.png" path="../../matlab/icons/control" />
+        <function>iopzplot</function>
+        <visibility>@(args) controlplotfunc('iopzplot',args)</visibility>
+        <parent_tool id="category_control" toolset_id="plot_toolset" />
+    </tool>
+    <tool id="stepplot" handler_class="com.mathworks.mlwidgets.graphics.PlotToolSetHandler">
+        <icon filename="plottypectl-stepplot.png" path="../../matlab/icons/control" id="stepPlotWide"/>
+        <icon filename="plotpickerctl-stepplot.png" path="../../matlab/icons/control" />
+        <function>stepplot</function>
+        <visibility>@(args) controlplotfunc('stepplot',args)</visibility>
+        <parent_tool id="category_control" toolset_id="plot_toolset" />
+    </tool>
+    <tool id="impulseplot" handler_class="com.mathworks.mlwidgets.graphics.PlotToolSetHandler">
+        <icon filename="plottypectl-impulseplot.png" path="../../matlab/icons/control" id="impulsePlotWide"/>
+        <icon filename="plotpickerctl-impulseplot.png" path="../../matlab/icons/control" />
+        <function>impulseplot</function>
+        <visibility>@(args) controlplotfunc('impulseplot',args)</visibility>
+        <parent_tool id="category_control" toolset_id="plot_toolset" />
+    </tool>
+    <tool id="hsvplot" handler_class="com.mathworks.mlwidgets.graphics.PlotToolSetHandler">
+        <icon filename="plottypectl-hsvplot.png" path="../../matlab/icons/control" id="hsvPlotWide"/>
+        <icon filename="plotpickerctl-hsvplot.png" path="../../matlab/icons/control" />
+        <function>hsvplot</function>
+        <visibility>@(args) controlplotfunc('hsvplot',args)</visibility>
+        <parent_tool id="category_control" toolset_id="plot_toolset" />
+    </tool>
+</toolset>
+

@@ -355,7 +355,7 @@ classdef PIDController < BaseController
             end
             
             try
-                [C, info] = pidtune(ss(obj.plant_model), ctype);
+                [C, info] = pidtune(obj.plant_model, ctype);
                 [obj.Kp, obj.Ki, obj.Kd] = piddata(C);
                 
                 fprintf('自动整定完成: Kp=%.4f, Ki=%.4f, Kd=%.4f\n', ...
@@ -388,7 +388,7 @@ classdef PIDController < BaseController
             end
             
             try
-                [C, info] = pidtune(ss(obj.plant_model), ctype, opt);
+                [C, info] = pidtune(obj.plant_model, ctype, opt);
                 [obj.Kp, obj.Ki, obj.Kd] = piddata(C);
                 
                 fprintf('频域设计完成: Kp=%.4f, Ki=%.4f, Kd=%.4f\n', ...

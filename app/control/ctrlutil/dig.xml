@@ -1,0 +1,10 @@
+<dig licenseFcn="isControlToolboxInstalledAndLicensed">
+    <action type="dynamic" id="Simulink:ModelDiscretizer">
+        <generator gateway="controlmenus" function="ModelDiscretizer" />
+        <domains>Simulink:Model,Stateflow:Model</domains>
+    </action>
+    <submenu type="dynamic" id="Simulink:SimulinkControlDesignerMenu">
+        <generator gateway="controlmenus" function="SimulinkControlDesignerMenu" />
+        <domains>Simulink:Model,Stateflow:Model</domains>
+    </submenu> 
+</dig>

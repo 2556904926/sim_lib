@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!--Process for creating block icons:
+  1) Create JIRA request to connect with a visual designer (Jason Williams)
+  2) Add correct header to SVG file (see mechss.svg)
+  3) Register as DVG in sl_customization: DVG.Registry.addIconPackage(svgdir)
+  4) mo = Simulink.Mask.get(gcb)  % mask object
+     mo.BlockDVGIcon = 'package.svgfile' % e.g., 'ControlBlockIcons.mechss'
+  5) Set SVG height/width to roughly match block size. Add offsets
+     to leave margins: Viewbox = [+x -y w h]  % x,y = margins
+                       h = Height+2*y,  w = Width+2*x
+  6) In Bmain, use 
+        DVG.DevTool.execDebugCmd('dvg.deepRefreshAll'); 
+        DVG.DevTool.clearImageCache;
+     to refresh icons in block library without restarting ML.
+  -->
+<IconPackage namespace="ControlBlockIcons">
+</IconPackage>

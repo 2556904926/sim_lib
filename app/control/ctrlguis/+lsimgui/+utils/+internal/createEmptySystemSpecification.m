@@ -1,0 +1,9 @@
+function system = createEmptySystemSpecification()
+% Helper to create empty structure for system
+
+% Copyright 2020 The MathWorks, Inc.
+system = struct('Name','',...
+    'StateName',{},...
+    'InitialStates',[],...
+    'Type','');
+end

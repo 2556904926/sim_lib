@@ -7,13 +7,13 @@ fprintf('========== 测试 pid_controller 接口 ==========\n\n');
 
 %% 1. create - 创建对象
 fprintf('1. create: ');
-obj = pid_controller('create', 'design_method', 'ziegler_nichols','controller_type','pi');
+obj = pid_controller('create', 'design_method', 'frequency','controller_type','pi');
 fprintf('obj_id = %d ✓\n', obj);
 
 %% 2. set_plant - 设置被控对象
 fprintf('2. set_plant: ');
-num = [0,89.0396];
-den = [1.0,4122.2];
+num = [0,104.0396];
+den = [1.0,5524.211810636967];
 pid_controller('set_plant', obj, num, den);
 fprintf('G(s) = %s / [%s] ✓\n', num2str(num), num2str(den));
 

@@ -19,7 +19,7 @@ fprintf('G(s) = %s / [%s] ✓\n', num2str(num), num2str(den));
 
 %% 3. set_params - 设置设计参数（可选）
 fprintf('3. set_params: ');
-pid_controller('set_params', obj,'target_wc', 1000, 'reference_value', 1, ...
+pid_controller('set_params', obj,'target_wc', 1000 * 2* 3.14, 'reference_value', 1, ...
     'controller_type','PI');
 
 %% 4. design - 执行设计

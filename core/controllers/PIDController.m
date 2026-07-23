@@ -32,7 +32,7 @@ classdef PIDController < BaseController
         % 参考值
         reference_value = 1
         target_pm = 60          % 目标相位裕度 (°)
-        target_wc = 100 * 2 * pi % 目标带宽 (rad/s)
+        target_wc = 1000 * 2 * pi % 目标带宽 (rad/s)
         target_rise_time = 0.01  % 目标上升时间 (s)
         target_overshoot = 0.05  % 目标超调量 (0~1)
     end
@@ -281,19 +281,60 @@ classdef PIDController < BaseController
         end
         
         function designByFrequency(obj)
-            % 频域设计：基于目标相位裕度和带宽
+            % 频域设计：基于目标裕度和带宽
             % 在 MATLAB 环境调用 pidtune，在 MCR 使用解析频域整定
             if isempty(obj.design_params)
                 error('请先设置设计参数');
             end
             
-            if isdeployed   % MCR 环境
-                [K, tau] = obj.extractFirstOrder();
-                bandwidth = obj.target_wc;
-                pm = obj.target_pm;
-                [Kp, Ki, Kd] = obj.tuneByBandwidthPM(K, tau, bandwidth, pm);
+            if isdeployed
+                % 1. 分析系统
+                sys_params = obj.analyzeSystem();
+                K = sys_params.gain;          % 静态增益
+                wb = obj.target_wc;           % 目标带宽 (rad/s)
+                
+                % 2. 根据系统类型计算
+                if strcmp(sys_params.type, 'first_order')
+                    tau = sys_params.tau;
+                    % PI 控制器
+                    Ki = wb / K;
+                    Kp = tau * wb / K;
+                    Kd = 0;
+                    fprintf('MCR-一阶零极点对消: Kp=%.4f, Ki=%.4f, Kd=%.4f (PM=90°)\n', Kp, Ki, Kd);
+                    
+                elseif strcmp(sys_params.type, 'second_order')
+                    zeta = sys_params.zeta;
+                    wn = sys_params.wn;
+                    if zeta <= 0 || zeta >= 1
+                        warning('阻尼比异常，改用保守PI');
+                        % 降级处理：提取主导极点近似为一阶
+                        p = sys_params.poles;
+                        [~, idx] = min(abs(real(p)));
+                        tau_dom = 1 / abs(real(p(idx)));
+                        Ki = wb / K;
+                        Kp = tau_dom * wb / K;
+                        Kd = 0;
+                    else
+                        % PID 控制器（双零点对消）
+                        Kd = wb / (K * wn^2);
+                        Kp = 2 * zeta * wb / (K * wn);
+                        Ki = wb / K;
+                        fprintf('MCR-二阶零极点对消: Kp=%.4f, Ki=%.4f, Kd=%.4f (PM=90°)\n', Kp, Ki, Kd);
+                    end
+                    
+                else
+                    % 高阶系统：强行降阶为一阶（取主导极点）
+                    warning('高阶系统自动降阶为主导极点一阶近似');
+                    p = sys_params.poles;
+                    [~, idx] = min(abs(real(p)));
+                    tau_dom = 1 / abs(real(p(idx)));
+                    Ki = wb / K;
+                    Kp = tau_dom * wb / K;
+                    Kd = 0;
+                end
+                
+                % 赋值
                 obj.Kp = Kp; obj.Ki = Ki; obj.Kd = Kd;
-                fprintf('MCR-频域设计完成: Kp=%.4f, Ki=%.4f, Kd=%.4f\n', Kp, Ki, Kd);
                 return;
             end
             
@@ -541,22 +582,6 @@ classdef PIDController < BaseController
             else
                 Ti = K * Kp / (tau * wn^2);
             end
-            Ki = Kp / Ti;
-            Kd = 0;
-        end
-        
-        function [Kp, Ki, Kd] = tuneByBandwidthPM(~, K, tau, bandwidth, pm_deg)
-            % 基于带宽和相位裕度的 PI 整定（解析法）
-            wc = bandwidth;
-            phi = pm_deg * pi / 180;
-            theta = pi/2 + atan(tau * wc) - phi;
-            % 保证 Ti 为正
-            if theta <= 0 || theta > pi/2
-                theta = abs(theta);
-                if theta > pi/2, theta = pi/2 - 0.01; end
-            end
-            Ti = 1 / (wc * tan(theta));
-            Kp = sqrt(1 + (tau*wc)^2) / sqrt(1 + 1/(Ti*wc)^2);
             Ki = Kp / Ti;
             Kd = 0;
         end
